@@ -1,0 +1,64 @@
+"""Synthetic corruption injection for outlier-detection training and eval.
+
+Every in-scope dataset is post-review clean (marvel_gnn_plan.md): no real
+labeled errors exist, so the outlier head trains and evaluates on known
+injected corruptions.
+"""
+
+from dataclasses import replace
+
+import networkx as nx
+import numpy as np
+
+
+FREQ_SHIFT = 1  # kind codes; 0 = clean
+QN_BUMP = 2
+
+
+def corrupt(transitions, fraction=0.05, rng=None):
+    """Corrupt a random subset of transitions. Returns (corrupted, kinds),
+    kinds an int8 array: 0 clean, FREQ_SHIFT, or QN_BUMP.
+
+    Two failure modes, equal odds per corrupted line:
+    - FREQ_SHIFT: frequency shifted by +-(5..500)x unc, log-uniform magnitude
+      (measurement / transcription error)
+    - QN_BUMP: J off-by-one on the upper level (QN misassignment; rewires the
+      graph, possibly onto a level that does not otherwise exist)
+    """
+    rng = np.random.default_rng(rng)
+    n_bad = max(1, round(fraction * len(transitions)))
+    bad = set(rng.choice(len(transitions), size=n_bad, replace=False).tolist())
+    kinds = np.zeros(len(transitions), dtype=np.int8)
+
+    out = []
+    for i, t in enumerate(transitions):
+        if i not in bad:
+            out.append(t)
+            continue
+
+        new_upper = None
+        if rng.random() < 0.5:
+            v, j = t.upper.split()
+            delta = int(rng.choice([-1, 1]))
+            for d in (delta, -delta):
+                cand = f"{v} {int(j) + d}"
+                if int(j) + d >= 0 and cand != t.lower:
+                    new_upper = cand
+                    break
+        if new_upper is not None:
+            kinds[i] = QN_BUMP
+            out.append(replace(t, upper=new_upper))
+        else:  # frequency-shift mode (also the fallback when no valid J bump)
+            kinds[i] = FREQ_SHIFT
+            shift = t.unc * 10 ** rng.uniform(np.log10(5.0), np.log10(500.0))
+            out.append(replace(t, freq=t.freq + float(rng.choice([-1.0, 1.0])) * shift))
+    return out, kinds
+
+
+def largest_component(transitions, labels):
+    """Restrict (transitions, labels) to the largest connected component —
+    a QN rewire can split the network, and the solver needs it connected."""
+    g = nx.Graph((t.upper, t.lower) for t in transitions)
+    main = max(nx.connected_components(g), key=len)
+    mask = np.array([t.upper in main for t in transitions])
+    return [t for t, m in zip(transitions, mask) if m], labels[mask]

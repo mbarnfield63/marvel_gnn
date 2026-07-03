@@ -1,7 +1,8 @@
-"""Shared GNN encoder + uncertainty-calibration head.
+"""Shared GNN encoder + task heads.
 
-The encoder is shared by design: later heads (outlier, orphan linkage, label
-correction) read the same embeddings. Only the uncertainty head exists so far.
+One encoder, one lightweight head per task (marvel_gnn_plan.md): uncertainty
+calibration (node -> log sigma) and outlier detection (transition -> logit).
+Later heads (orphan linkage, label correction) read the same embeddings.
 """
 
 import torch
@@ -26,17 +27,28 @@ class Encoder(nn.Module):
         return h
 
 
-class UncertaintyModel(nn.Module):
-    """Predicts per-level log(sigma) in 1e-6 cm-1 units."""
-
+class MarvelGNN(nn.Module):
     def __init__(self, hidden=64, layers=3):
         super().__init__()
         self.encoder = Encoder(hidden, layers)
-        self.head = nn.Sequential(
+        self.unc_head = nn.Sequential(
             nn.Linear(hidden, hidden), nn.ReLU(), nn.Linear(hidden, 1))
+        self.outlier_head = nn.Sequential(
+            nn.Linear(2 * hidden + EDGE_DIM, hidden), nn.ReLU(), nn.Linear(hidden, 1))
 
-    def forward(self, data):
-        return self.head(self.encoder(data)).squeeze(-1)
+    def log_sigma(self, data):
+        """Per-level log(sigma) in 1e-6 cm-1 units."""
+        return self.unc_head(self.encoder(data)).squeeze(-1)
+
+    def outlier_logits(self, data):
+        """Per-transition badness logit. build_graph stores transition k as
+        directed edges 2k (upper -> lower) and 2k+1, so even rows enumerate
+        the transitions in input order."""
+        h = self.encoder(data)
+        up = data.edge_index[0, 0::2]
+        low = data.edge_index[1, 0::2]
+        z = torch.cat([h[up], h[low], data.edge_attr[0::2]], dim=1)
+        return self.outlier_head(z).squeeze(-1)
 
 
 def nll_loss(log_sigma, errors):

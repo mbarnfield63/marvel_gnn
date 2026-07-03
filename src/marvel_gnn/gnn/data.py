@@ -62,7 +62,7 @@ def build_graph(transitions):
         i, k = idx[t.upper], idx[t.lower]
         resid = abs(t.freq - (energies[t.upper] - energies[t.lower]))
         feat = [np.log10(t.unc) / 10.0, np.log1p(t.freq) / 10.0,
-                min(resid / t.unc, 10.0) / 10.0]
+                np.log10(1.0 + resid / t.unc) / 4.0]
         src += [i, k]
         dst += [k, i]
         eattr += [feat, feat]

@@ -1,16 +1,21 @@
-"""Train the uncertainty-calibration head on CO and evaluate it.
+"""Train the shared encoder with the uncertainty and outlier heads on CO.
 
 Run: uv run python -m marvel_gnn.gnn.train
 
 Split is cross-isotopologue: train on the three large networks, validate on
-the two small ones (never seen in training). Primary eval: NLL and 1-sigma
-coverage of *held-out* masked-refit errors, with two controls scored on the
-same errors — the legacy Dijkstra+bootstrap uncertainty and the published e_E.
-Coverage against published energies is reported as a sanity check only (per
-marvel_gnn_plan.md, not used for model selection).
+the two small ones (never seen in training).
+
+Uncertainty eval: NLL and 1-sigma coverage of held-out masked-refit errors,
+with the legacy Dijkstra+bootstrap uncertainty and the published e_E as
+controls on the same errors. Coverage against published energies is a sanity
+check only.
+
+Outlier eval: average precision and precision/recall on held-out corrupted
+copies of the validation networks (5% injected corruptions; see corrupt.py).
+Deliberately not benchmarked against the legacy ratio-threshold heuristic
+(marvel_gnn_plan.md) — that heuristic is what this head replaces.
 """
 
-import math
 from pathlib import Path
 
 import numpy as np
@@ -19,17 +24,22 @@ import torch
 from marvel_gnn.core.network import split_components
 from marvel_gnn.core.parse import parse_mrt_levels, parse_mrt_transitions
 from marvel_gnn.core.uncertainty import marvel_solve
+from marvel_gnn.gnn.corrupt import corrupt, largest_component
 from marvel_gnn.gnn.data import ERROR_SCALE, build_graph, refit_error_matrix
-from marvel_gnn.gnn.model import UncertaintyModel, nll_loss
+from marvel_gnn.gnn.model import MarvelGNN, nll_loss
 
 CO_DIR = Path(r"C:\Code\MARVEL\molecules\CO")
-MODEL_PATH = Path(__file__).parents[3] / "data" / "uncertainty_model.pt"
+MODEL_PATH = Path(__file__).parents[3] / "data" / "marvel_gnn.pt"
 
 TRAIN_ISOS = ["13C16O", "12C18O", "13C18O"]
 VAL_ISOS = ["12C17O", "13C17O"]
 
-N_TRAIN_SAMPLES = 200
+N_TRAIN_SAMPLES = 200   # masked refits per training network (uncertainty)
 N_VAL_SAMPLES = 100
+N_TRAIN_CORRUPT = 30    # corrupted copies per training network (outlier)
+N_VAL_CORRUPT = 20
+CORRUPT_PER_EPOCH = 6   # corrupted graphs sampled into each epoch's loss
+OUT_LOSS_WEIGHT = 10.0  # uncertainty-NLL gradients dominate the shared encoder otherwise
 EPOCHS = 1000
 
 
@@ -43,6 +53,19 @@ def prepare(iso, transitions, n_samples, seed):
     return comp, graph, errors
 
 
+def prepare_corrupted(comp, n_graphs, seed, device):
+    rng = np.random.default_rng(seed)
+    graphs = []
+    for _ in range(n_graphs):
+        bad, kinds = corrupt(comp, rng=rng)
+        bad, kinds = largest_component(bad, kinds)
+        g, _ = build_graph(bad)
+        graphs.append((g.to(device),
+                       torch.tensor(kinds > 0, dtype=torch.float32, device=device),
+                       kinds))
+    return graphs
+
+
 def fixed_sigma_metrics(sigma, errors):
     """NLL and 1-sigma coverage for a fixed per-level sigma vector (mu-cm-1)."""
     log_sigma = torch.log(torch.tensor(sigma, dtype=torch.float32))
@@ -50,6 +73,41 @@ def fixed_sigma_metrics(sigma, errors):
     mask = torch.isfinite(errors)
     cover = (errors.abs() <= torch.tensor(sigma, dtype=torch.float32).unsqueeze(1))[mask]
     return nll, cover.float().mean().item()
+
+
+def average_precision(labels, scores):
+    order = np.argsort(-scores)
+    hits = labels[order]
+    precision = np.cumsum(hits) / np.arange(1, len(hits) + 1)
+    return float((precision * hits).sum() / hits.sum())
+
+
+def outlier_metrics(model, graphs):
+    """Pooled AP + precision/recall at p=0.5 + mean per-graph precision@k,
+    plus per-corruption-kind AP (each kind's positives vs clean negatives)."""
+    all_scores, all_kinds, p_at_k = [], [], []
+    with torch.no_grad():
+        for g, labels, kinds in graphs:
+            logits = model.outlier_logits(g).cpu().numpy()
+            all_scores.append(logits)
+            all_kinds.append(kinds)
+            k = int((kinds > 0).sum())
+            top = np.argsort(-logits)[:k]
+            p_at_k.append((kinds[top] > 0).mean())
+    scores = np.concatenate(all_scores)
+    kinds = np.concatenate(all_kinds)
+    labels = kinds > 0
+    flagged = scores > 0.0  # p = 0.5
+    m = {"ap": average_precision(labels, scores),
+         "precision": labels[flagged].mean() if flagged.any() else float("nan"),
+         "recall": flagged[labels].mean(),
+         "p_at_k": float(np.mean(p_at_k)),
+         "base": labels.mean()}
+    for kind, name in [(1, "freq"), (2, "qn")]:
+        mask = (kinds == kind) | (kinds == 0)
+        m[f"ap_{name}"] = average_precision(kinds[mask] == kind, scores[mask])
+        m[f"recall_{name}"] = flagged[kinds == kind].mean()
+    return m
 
 
 def main():
@@ -66,19 +124,37 @@ def main():
                for c, g, e in (prepare(iso, transitions, N_VAL_SAMPLES, seed=2)
                                for iso in VAL_ISOS)]
 
-    model = UncertaintyModel().to(device)
+    train_bad = []
+    for i, (comp, _, _) in enumerate(train_set):
+        train_bad += prepare_corrupted(comp, N_TRAIN_CORRUPT, seed=100 + i, device=device)
+    val_bad = {iso: prepare_corrupted(comp, N_VAL_CORRUPT, seed=200 + i, device=device)
+               for i, (iso, (comp, _, _)) in enumerate(zip(VAL_ISOS, val_set))}
+
+    n_pos = sum(labels.sum().item() for _, labels, _ in train_bad)
+    n_all = sum(len(labels) for _, labels, _ in train_bad)
+    bce = torch.nn.BCEWithLogitsLoss(
+        pos_weight=torch.tensor((n_all - n_pos) / n_pos, device=device))
+
+    model = MarvelGNN().to(device)
     opt = torch.optim.Adam(model.parameters(), lr=1e-3)
+    rng = np.random.default_rng(0)
     for epoch in range(EPOCHS):
         model.train()
         opt.zero_grad()
-        loss = sum(nll_loss(model(g), e) for _, g, e in train_set) / len(train_set)
-        loss.backward()
+        unc_loss = sum(nll_loss(model.log_sigma(g), e) for _, g, e in train_set) / len(train_set)
+        batch = rng.choice(len(train_bad), size=CORRUPT_PER_EPOCH, replace=False)
+        out_loss = sum(bce(model.outlier_logits(train_bad[k][0]), train_bad[k][1])
+                       for k in batch) / CORRUPT_PER_EPOCH
+        (unc_loss + OUT_LOSS_WEIGHT * out_loss).backward()
         opt.step()
+
         if epoch % 50 == 0 or epoch == EPOCHS - 1:
             model.eval()
             with torch.no_grad():
-                vloss = sum(nll_loss(model(g), e) for _, g, e in val_set) / len(val_set)
-            print(f"epoch {epoch:4d}  train NLL {loss.item():8.4f}  val NLL {vloss.item():8.4f}")
+                v_unc = sum(nll_loss(model.log_sigma(g), e) for _, g, e in val_set) / len(val_set)
+            v_ap = np.mean([outlier_metrics(model, graphs)["ap"] for graphs in val_bad.values()])
+            print(f"epoch {epoch:4d}  train unc {unc_loss.item():9.4f}  out {out_loss.item():.4f}"
+                  f"  | val unc NLL {v_unc.item():10.4f}  val outlier AP {v_ap:.3f}")
 
     MODEL_PATH.parent.mkdir(exist_ok=True)
     torch.save(model.state_dict(), MODEL_PATH)
@@ -87,7 +163,7 @@ def main():
     model.eval()
     for iso, (comp, graph, errors) in zip(VAL_ISOS, val_set):
         with torch.no_grad():
-            sigma_gnn = torch.exp(model(graph)).cpu().numpy().astype(np.float64)
+            sigma_gnn = torch.exp(model.log_sigma(graph)).cpu().numpy().astype(np.float64)
 
         legacy = marvel_solve(comp, bootstrap_iterations=100, rng=42)
         sigma_legacy = np.array([legacy[a][1] for a in graph.assignments]) * ERROR_SCALE
@@ -96,19 +172,27 @@ def main():
 
         keep = np.arange(len(graph.assignments)) != graph.ground  # legacy/pub sigma = 0 there
         err = errors[keep].cpu()
-        print(f"== {iso} (validation, {errors.shape[1]} held-out refits) ==")
+        print(f"== {iso} uncertainty (validation, {errors.shape[1]} held-out refits) ==")
         for name, sigma in [("GNN", sigma_gnn[keep]),
                             ("legacy baseline", sigma_legacy[keep]),
                             ("published e_E", sigma_pub[keep])]:
             nll, cover = fixed_sigma_metrics(sigma, err)
-            print(f"  {name:16s} NLL {nll:8.4f}   1-sigma coverage {cover:.1%} (target ~68%)")
+            print(f"  {name:16s} NLL {nll:10.4f}   1-sigma coverage {cover:.1%} (target ~68%)")
 
-        # sanity check: does sigma cover the gap to the published energies?
         gap = np.abs(graph.level_energies.numpy()
                      - np.array([pub[a].energy for a in graph.assignments])) * ERROR_SCALE
         for name, sigma in [("GNN", sigma_gnn), ("legacy baseline", sigma_legacy)]:
             print(f"  sanity: |E_ours - E_published| <= sigma_{name}: "
                   f"{np.mean(gap[keep] <= sigma[keep]):.1%}")
+
+        m = outlier_metrics(model, val_bad[iso])
+        print(f"== {iso} outlier detection ({N_VAL_CORRUPT} corrupted copies, "
+              f"{m['base']:.1%} lines bad) ==")
+        print(f"  average precision {m['ap']:.3f} (random baseline {m['base']:.3f})")
+        print(f"  precision {m['precision']:.1%} / recall {m['recall']:.1%} at p=0.5")
+        print(f"  precision@k (k = nb injected) {m['p_at_k']:.1%}")
+        print(f"  by kind: freq-shift AP {m['ap_freq']:.3f} recall {m['recall_freq']:.1%}"
+              f" | qn-bump AP {m['ap_qn']:.3f} recall {m['recall_qn']:.1%}")
         print()
 
 

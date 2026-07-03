@@ -4,7 +4,7 @@ import torch
 
 from marvel_gnn.core.parse import Transition
 from marvel_gnn.gnn.data import EDGE_DIM, ERROR_SCALE, NODE_DIM, build_graph, refit_error_matrix
-from marvel_gnn.gnn.model import UncertaintyModel, nll_loss
+from marvel_gnn.gnn.model import MarvelGNN, nll_loss
 
 
 def tr(upper, lower, freq, unc=1e-3):
@@ -51,8 +51,8 @@ def test_refit_errors_scale_with_conflict():
 
 def test_model_forward_and_loss():
     graph, idx = build_graph(ladder())
-    model = UncertaintyModel(hidden=16, layers=2)
-    log_sigma = model(graph)
+    model = MarvelGNN(hidden=16, layers=2)
+    log_sigma = model.log_sigma(graph)
     assert log_sigma.shape == (len(idx),)
     errors = torch.randn(len(idx), 5)
     errors[0] = float("nan")
@@ -67,12 +67,12 @@ def test_training_reduces_loss():
         refit_error_matrix(ladder(12), n_samples=50, rng=1), dtype=torch.float32)
     errors[graph.ground] = float("nan")
 
-    model = UncertaintyModel(hidden=16, layers=2)
+    model = MarvelGNN(hidden=16, layers=2)
     opt = torch.optim.Adam(model.parameters(), lr=1e-2)
     first = None
     for _ in range(60):
         opt.zero_grad()
-        loss = nll_loss(model(graph), errors)
+        loss = nll_loss(model.log_sigma(graph), errors)
         loss.backward()
         opt.step()
         first = first if first is not None else loss.item()
