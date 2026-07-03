@@ -11,7 +11,17 @@ dependencies = [
     "networkx>=3.6.1",
     "numpy>=2.5.0",
     "scipy>=1.18.0",
+    "torch>=2.12.1",
+    "torch-geometric>=2.8.0",
 ]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu126" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
 
 [build-system]
 requires = ["uv_build>=0.9.18,<0.10.0"]

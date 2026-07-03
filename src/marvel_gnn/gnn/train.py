@@ -54,13 +54,19 @@ def fixed_sigma_metrics(sigma, errors):
 
 def main():
     torch.manual_seed(0)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"device: {device}")
     transitions = parse_mrt_transitions(CO_DIR / "CO_isotopologues_all_input.txt")
     published = parse_mrt_levels(CO_DIR / "CO_isotopologues_all_output.txt")
 
-    train_set = [prepare(iso, transitions, N_TRAIN_SAMPLES, seed=1) for iso in TRAIN_ISOS]
-    val_set = [prepare(iso, transitions, N_VAL_SAMPLES, seed=2) for iso in VAL_ISOS]
+    train_set = [(c, g.to(device), e.to(device))
+                 for c, g, e in (prepare(iso, transitions, N_TRAIN_SAMPLES, seed=1)
+                                 for iso in TRAIN_ISOS)]
+    val_set = [(c, g.to(device), e.to(device))
+               for c, g, e in (prepare(iso, transitions, N_VAL_SAMPLES, seed=2)
+                               for iso in VAL_ISOS)]
 
-    model = UncertaintyModel()
+    model = UncertaintyModel().to(device)
     opt = torch.optim.Adam(model.parameters(), lr=1e-3)
     for epoch in range(EPOCHS):
         model.train()
@@ -81,7 +87,7 @@ def main():
     model.eval()
     for iso, (comp, graph, errors) in zip(VAL_ISOS, val_set):
         with torch.no_grad():
-            sigma_gnn = torch.exp(model(graph)).numpy().astype(np.float64)
+            sigma_gnn = torch.exp(model(graph)).cpu().numpy().astype(np.float64)
 
         legacy = marvel_solve(comp, bootstrap_iterations=100, rng=42)
         sigma_legacy = np.array([legacy[a][1] for a in graph.assignments]) * ERROR_SCALE
@@ -89,7 +95,7 @@ def main():
         sigma_pub = np.array([pub[a].unc for a in graph.assignments]) * ERROR_SCALE
 
         keep = np.arange(len(graph.assignments)) != graph.ground  # legacy/pub sigma = 0 there
-        err = errors[keep]
+        err = errors[keep].cpu()
         print(f"== {iso} (validation, {errors.shape[1]} held-out refits) ==")
         for name, sigma in [("GNN", sigma_gnn[keep]),
                             ("legacy baseline", sigma_legacy[keep]),
