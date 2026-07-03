@@ -37,7 +37,7 @@ VAL_ISOS = ["12C17O", "13C17O"]
 N_TRAIN_SAMPLES = 200   # masked refits per training network (uncertainty)
 N_VAL_SAMPLES = 100
 N_TRAIN_CORRUPT = 30    # corrupted copies per training network (outlier)
-N_VAL_CORRUPT = 20
+N_VAL_CORRUPT = 50      # val networks are tiny; more copies for stable stratified stats
 CORRUPT_PER_EPOCH = 6   # corrupted graphs sampled into each epoch's loss
 OUT_LOSS_WEIGHT = 10.0  # uncertainty-NLL gradients dominate the shared encoder otherwise
 EPOCHS = 1000
@@ -57,12 +57,12 @@ def prepare_corrupted(comp, n_graphs, seed, device):
     rng = np.random.default_rng(seed)
     graphs = []
     for _ in range(n_graphs):
-        bad, kinds = corrupt(comp, rng=rng)
-        bad, kinds = largest_component(bad, kinds)
+        bad, kinds, mags = corrupt(comp, rng=rng)
+        bad, kinds, mags = largest_component(bad, kinds, mags)
         g, _ = build_graph(bad)
         graphs.append((g.to(device),
                        torch.tensor(kinds > 0, dtype=torch.float32, device=device),
-                       kinds))
+                       kinds, mags))
     return graphs
 
 
@@ -82,20 +82,26 @@ def average_precision(labels, scores):
     return float((precision * hits).sum() / hits.sum())
 
 
+MAG_BINS = [5.0, 15.0, 50.0, 150.0, 500.0]  # freq-shift amplitude in units of unc
+
+
 def outlier_metrics(model, graphs):
     """Pooled AP + precision/recall at p=0.5 + mean per-graph precision@k,
-    plus per-corruption-kind AP (each kind's positives vs clean negatives)."""
-    all_scores, all_kinds, p_at_k = [], [], []
+    per-corruption-kind AP (each kind's positives vs clean negatives), and
+    freq-shift recall stratified by shift amplitude (detectability floor)."""
+    all_scores, all_kinds, all_mags, p_at_k = [], [], [], []
     with torch.no_grad():
-        for g, labels, kinds in graphs:
+        for g, labels, kinds, mags in graphs:
             logits = model.outlier_logits(g).cpu().numpy()
             all_scores.append(logits)
             all_kinds.append(kinds)
+            all_mags.append(mags)
             k = int((kinds > 0).sum())
             top = np.argsort(-logits)[:k]
             p_at_k.append((kinds[top] > 0).mean())
     scores = np.concatenate(all_scores)
     kinds = np.concatenate(all_kinds)
+    mags = np.concatenate(all_mags)
     labels = kinds > 0
     flagged = scores > 0.0  # p = 0.5
     m = {"ap": average_precision(labels, scores),
@@ -107,6 +113,10 @@ def outlier_metrics(model, graphs):
         mask = (kinds == kind) | (kinds == 0)
         m[f"ap_{name}"] = average_precision(kinds[mask] == kind, scores[mask])
         m[f"recall_{name}"] = flagged[kinds == kind].mean()
+    m["freq_by_mag"] = [
+        (lo, hi, int(sel.sum()), flagged[sel].mean() if sel.any() else float("nan"))
+        for lo, hi in zip(MAG_BINS, MAG_BINS[1:])
+        for sel in [(kinds == 1) & (mags >= lo) & (mags < hi)]]
     return m
 
 
@@ -130,14 +140,15 @@ def main():
     val_bad = {iso: prepare_corrupted(comp, N_VAL_CORRUPT, seed=200 + i, device=device)
                for i, (iso, (comp, _, _)) in enumerate(zip(VAL_ISOS, val_set))}
 
-    n_pos = sum(labels.sum().item() for _, labels, _ in train_bad)
-    n_all = sum(len(labels) for _, labels, _ in train_bad)
+    n_pos = sum(labels.sum().item() for _, labels, _, _ in train_bad)
+    n_all = sum(len(labels) for _, labels, _, _ in train_bad)
     bce = torch.nn.BCEWithLogitsLoss(
         pos_weight=torch.tensor((n_all - n_pos) / n_pos, device=device))
 
     model = MarvelGNN().to(device)
     opt = torch.optim.Adam(model.parameters(), lr=1e-3)
     rng = np.random.default_rng(0)
+    best = (float("inf"), None)  # early stopping: keep the best-val-NLL checkpoint
     for epoch in range(EPOCHS):
         model.train()
         opt.zero_grad()
@@ -155,10 +166,15 @@ def main():
             v_ap = np.mean([outlier_metrics(model, graphs)["ap"] for graphs in val_bad.values()])
             print(f"epoch {epoch:4d}  train unc {unc_loss.item():9.4f}  out {out_loss.item():.4f}"
                   f"  | val unc NLL {v_unc.item():10.4f}  val outlier AP {v_ap:.3f}")
+            if v_unc.item() < best[0]:
+                best = (v_unc.item(), epoch,
+                        {k: v.clone() for k, v in model.state_dict().items()})
 
+    model.load_state_dict(best[2])
+    print(f"\nbest checkpoint: epoch {best[1]} (val unc NLL {best[0]:.4f})")
     MODEL_PATH.parent.mkdir(exist_ok=True)
     torch.save(model.state_dict(), MODEL_PATH)
-    print(f"\nmodel saved to {MODEL_PATH}\n")
+    print(f"model saved to {MODEL_PATH}\n")
 
     model.eval()
     for iso, (comp, graph, errors) in zip(VAL_ISOS, val_set):
@@ -193,6 +209,9 @@ def main():
         print(f"  precision@k (k = nb injected) {m['p_at_k']:.1%}")
         print(f"  by kind: freq-shift AP {m['ap_freq']:.3f} recall {m['recall_freq']:.1%}"
               f" | qn-bump AP {m['ap_qn']:.3f} recall {m['recall_qn']:.1%}")
+        strat = "  ".join(f"{lo:.0f}-{hi:.0f}x: {r:.0%} (n={n})"
+                          for lo, hi, n, r in m["freq_by_mag"])
+        print(f"  freq-shift recall by amplitude: {strat}")
         print()
 
 

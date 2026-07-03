@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 import torch
 
 from marvel_gnn.core.parse import Transition
@@ -19,20 +20,26 @@ def ladder(n=30):
 
 def test_corrupt_counts_and_marks():
     ts = ladder(30)
-    corrupted, kinds = corrupt(ts, fraction=0.1, rng=0)
+    corrupted, kinds, mags = corrupt(ts, fraction=0.1, rng=0)
     assert len(corrupted) == len(ts)
     assert (kinds > 0).sum() == 3  # round(0.1 * 30)
     changed = [i for i, (a, b) in enumerate(zip(ts, corrupted)) if a != b]
     assert changed == list(np.where(kinds > 0)[0])
     assert all(t.upper != t.lower for t in corrupted)
     assert all(int(t.upper.split()[1]) >= 0 for t in corrupted)
+    # mags: positive iff freq-shift, and match the actual injected shift
+    assert ((mags > 0) == (kinds == 1)).all()
+    for i in np.where(kinds == 1)[0]:
+        assert abs(corrupted[i].freq - ts[i].freq) / ts[i].unc == pytest.approx(mags[i])
+        assert 5.0 <= mags[i] <= 500.0
 
 
 def test_corrupt_deterministic():
-    a, ka = corrupt(ladder(), fraction=0.1, rng=7)
-    b, kb = corrupt(ladder(), fraction=0.1, rng=7)
+    a, ka, ma = corrupt(ladder(), fraction=0.1, rng=7)
+    b, kb, mb = corrupt(ladder(), fraction=0.1, rng=7)
     assert a == b
     np.testing.assert_array_equal(ka, kb)
+    np.testing.assert_array_equal(ma, mb)
 
 
 def test_largest_component_filters_labels():
@@ -57,7 +64,7 @@ def test_outlier_training_reduces_loss():
     rng = np.random.default_rng(0)
     graphs = []
     for _ in range(4):
-        bad, kinds = corrupt(ladder(30), fraction=0.1, rng=rng)
+        bad, kinds, _ = corrupt(ladder(30), fraction=0.1, rng=rng)
         bad, kinds = largest_component(bad, kinds)
         g, _ = build_graph(bad)
         graphs.append((g, torch.tensor(kinds > 0, dtype=torch.float32)))

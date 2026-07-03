@@ -16,8 +16,10 @@ QN_BUMP = 2
 
 
 def corrupt(transitions, fraction=0.05, rng=None):
-    """Corrupt a random subset of transitions. Returns (corrupted, kinds),
-    kinds an int8 array: 0 clean, FREQ_SHIFT, or QN_BUMP.
+    """Corrupt a random subset of transitions. Returns (corrupted, kinds, mags):
+    kinds an int8 array (0 clean, FREQ_SHIFT, or QN_BUMP), mags the shift
+    magnitude in units of unc (0 for clean and QN_BUMP lines) — used for
+    amplitude-stratified eval.
 
     Two failure modes, equal odds per corrupted line:
     - FREQ_SHIFT: frequency shifted by +-(5..500)x unc, log-uniform magnitude
@@ -29,6 +31,7 @@ def corrupt(transitions, fraction=0.05, rng=None):
     n_bad = max(1, round(fraction * len(transitions)))
     bad = set(rng.choice(len(transitions), size=n_bad, replace=False).tolist())
     kinds = np.zeros(len(transitions), dtype=np.int8)
+    mags = np.zeros(len(transitions))
 
     out = []
     for i, t in enumerate(transitions):
@@ -50,15 +53,17 @@ def corrupt(transitions, fraction=0.05, rng=None):
             out.append(replace(t, upper=new_upper))
         else:  # frequency-shift mode (also the fallback when no valid J bump)
             kinds[i] = FREQ_SHIFT
-            shift = t.unc * 10 ** rng.uniform(np.log10(5.0), np.log10(500.0))
-            out.append(replace(t, freq=t.freq + float(rng.choice([-1.0, 1.0])) * shift))
-    return out, kinds
+            mags[i] = 10 ** rng.uniform(np.log10(5.0), np.log10(500.0))
+            out.append(replace(t, freq=t.freq + float(rng.choice([-1.0, 1.0])) * t.unc * mags[i]))
+    return out, kinds, mags
 
 
-def largest_component(transitions, labels):
-    """Restrict (transitions, labels) to the largest connected component —
-    a QN rewire can split the network, and the solver needs it connected."""
+def largest_component(transitions, *labels):
+    """Restrict (transitions, *label arrays) to the largest connected
+    component — a QN rewire can split the network, and the solver needs it
+    connected."""
     g = nx.Graph((t.upper, t.lower) for t in transitions)
     main = max(nx.connected_components(g), key=len)
     mask = np.array([t.upper in main for t in transitions])
-    return [t for t, m in zip(transitions, mask) if m], labels[mask]
+    return ([t for t, m in zip(transitions, mask) if m],
+            *(lab[mask] for lab in labels))

@@ -3,7 +3,9 @@ import pytest
 import torch
 
 from marvel_gnn.core.parse import Transition
-from marvel_gnn.gnn.data import EDGE_DIM, ERROR_SCALE, NODE_DIM, build_graph, refit_error_matrix
+from marvel_gnn.core.solver import level_index
+from marvel_gnn.gnn.data import (EDGE_DIM, ERROR_SCALE, NODE_DIM, build_graph,
+                                 edge_leverages, refit_error_matrix)
 from marvel_gnn.gnn.model import MarvelGNN, nll_loss
 
 
@@ -16,6 +18,20 @@ def ladder(n=10):
     ts = [tr(f"0 {i+1}", f"0 {i}", 10.0 + i) for i in range(n - 1)]
     ts.append(tr("0 2", "0 0", 21.0))
     return ts
+
+
+def test_edge_leverages():
+    ts = ladder()  # chain + one skip edge: edges 0,1 and the skip form a cycle
+    idx = level_index(ts)
+    h = edge_leverages(ts, idx)
+    assert h.shape == (len(ts),)
+    assert np.isclose(h.sum(), len(idx) - 1)  # trace of the hat matrix = rank
+    cycle = [0, 1, len(ts) - 1]
+    bridges = [i for i in range(len(ts)) if i not in cycle]
+    assert np.allclose(h[bridges], 1.0)  # bridge residual fully absorbed
+    assert (h[cycle] < 1.0).all()
+    # equal uncertainties: the 3-cycle splits leverage 2 across its edges
+    assert np.allclose(h[cycle], 2.0 / 3.0)
 
 
 def test_build_graph_shapes():

@@ -21,7 +21,34 @@ from marvel_gnn.core.solver import level_index, solve_energies
 ERROR_SCALE = 1e6  # errors/sigmas are handled in 1e-6 cm-1 units
 
 NODE_DIM = 7
-EDGE_DIM = 3
+EDGE_DIM = 5
+
+
+def edge_leverages(transitions, idx):
+    """Leverage h of each transition in the weighted least-squares solve.
+
+    h_e = w_e * x_e^T L+ x_e (x_e the incidence vector, w_e = 1/unc^2):
+    h -> 1 means the solve absorbs the line into the level energies (a bridge
+    is exactly 1 — any frequency shift there is undetectable from residuals);
+    h -> 0 means the line is highly redundant. sum(h) = n_levels - 1.
+    Computed on the reduced system (level 0 pinned, as in solve_energies);
+    components here are small (<1k levels), so a dense inverse is fine.
+    """
+    n = len(idx)
+    w = np.array([1.0 / (t.unc * t.unc) for t in transitions])
+    lap = np.zeros((n, n))
+    for t, wi in zip(transitions, w):
+        i, j = idx[t.upper], idx[t.lower]
+        lap[i, i] += wi
+        lap[j, j] += wi
+        lap[i, j] -= wi
+        lap[j, i] -= wi
+    g = np.zeros((n, n))
+    g[1:, 1:] = np.linalg.inv(lap[1:, 1:])
+    h = np.array([w[k] * (g[i, i] + g[j, j] - 2.0 * g[i, j])
+                  for k, t in enumerate(transitions)
+                  for i, j in [(idx[t.upper], idx[t.lower])]])
+    return np.clip(h, 0.0, 1.0)
 
 
 def build_graph(transitions):
@@ -57,12 +84,19 @@ def build_graph(transitions):
         np.log1p(e_arr) / 10.0,
     ])
 
+    lev = edge_leverages(transitions, idx)
     src, dst, eattr = [], [], []
-    for t in transitions:
+    for t, h in zip(transitions, lev):
         i, k = idx[t.upper], idx[t.lower]
         resid = abs(t.freq - (energies[t.upper] - energies[t.lower]))
+        # studentized leave-one-out residual: undoes the solve's absorption of
+        # the line (resid ~ (1-h) * true error), so a shifted redundant line
+        # scores its full amplitude while a bridge stays at 0 (undetectable)
+        stud = resid / (t.unc * np.sqrt(max(1.0 - h, 1e-12)))
         feat = [np.log10(t.unc) / 10.0, np.log1p(t.freq) / 10.0,
-                np.log10(1.0 + resid / t.unc) / 4.0]
+                np.log10(1.0 + resid / t.unc) / 4.0,
+                h,
+                np.log10(1.0 + stud) / 4.0]
         src += [i, k]
         dst += [k, i]
         eattr += [feat, feat]
