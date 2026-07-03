@@ -1,0 +1,23 @@
+[project]
+name = "marvel-gnn"
+version = "0.1.0"
+description = "Python port of MARVEL plus a GNN for uncertainty calibration, outlier detection, orphan-node linkage, and label-correction triage"
+readme = "README.md"
+authors = [
+    { name = "Marco Barnfield", email = "mbarnfield63@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "networkx>=3.6.1",
+    "numpy>=2.5.0",
+    "scipy>=1.18.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
