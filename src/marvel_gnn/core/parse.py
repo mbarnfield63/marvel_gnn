@@ -45,10 +45,13 @@ def load_segments(path):
     return dict(zip(tokens[::2], tokens[1::2]))
 
 
-def parse_native(path, nqn, segments=None):
+def parse_native(path, nqn=None, segments=None):
     """Parse a native MARVEL transitions file.
 
     Line format: freq  orig_unc  optim_unc  <nqn upper QNs>  <nqn lower QNs>  ref
+
+    nqn=None infers the QN count from the first data line (tokens = 2*nqn + 4);
+    the method is otherwise QN-count-oblivious since assignments are opaque keys.
 
     Returns (kept, excluded): excluded holds negative-frequency transitions
     (freq kept negative, as in the C++), which MARVEL leaves out of the solve
@@ -59,8 +62,10 @@ def parse_native(path, nqn, segments=None):
         if "&" in line:
             continue
         tokens = line.split()
-        if len(tokens) < 5:
+        if len(tokens) < 5 or tokens[0].startswith("#"):
             continue
+        if nqn is None:
+            nqn = (len(tokens) - 4) // 2
         freq = float(tokens[0])
         orig_unc = float(tokens[1])
         unc = float(tokens[2])
@@ -88,6 +93,57 @@ def parse_native(path, nqn, segments=None):
             raise ValueError(f"upper == lower assignment at line {lineno}: {upper!r}")
         kept.append(t)
     return kept, excluded
+
+
+def parse_native_levels(path):
+    """Parse a native MARVEL energy-levels file: <QN tokens>  E  unc  n_trans.
+
+    QN-count-oblivious: everything before the last three columns is the
+    assignment key. Returns {assignment: Level}.
+    """
+    levels = {}
+    for line in Path(path).read_text().splitlines():
+        tokens = line.split()
+        if len(tokens) < 4 or tokens[0].startswith("#"):
+            continue
+        levels[" ".join(tokens[:-3])] = Level(
+            energy=float(tokens[-3]), unc=float(tokens[-2]), n_trans=int(tokens[-1]))
+    return levels
+
+
+_CANDIDATE_UNITS = ("cm-1",) + tuple(_UNIT_TO_HZ)  # cm-1 first: wins ties
+
+
+def infer_segments(path, levels, nqn=None):
+    """Reconstruct a missing segment file: infer each source tag's unit.
+
+    For datasets deposited without their segment file (the unit tags live in a
+    separate MARVEL input that is often not published), test every tag's
+    positive-frequency lines against solved level differences under each
+    candidate unit; a tag's unit is the one matching the most lines within
+    3x the optimized uncertainty. Tags with no checkable line default to cm-1.
+
+    Returns (segments, report): segments is {tag: unit} usable directly by
+    parse_native; report is {tag: {unit: n_matching}} plus a "lines" count —
+    inferred units are a provenance decision, so review the report before
+    trusting a solve built on it.
+    """
+    kept, excluded = parse_native(path, nqn)  # raw, no conversion
+    rows = {t.tag: [] for t in kept + excluded}
+    for t in kept:
+        eu, el = levels.get(t.upper), levels.get(t.lower)
+        if eu is not None and el is not None:
+            rows[t.tag].append((t.freq, t.unc, eu.energy - el.energy))
+    segments, report = {}, {}
+    for tag, checkable in rows.items():
+        counts = {}
+        for unit in _CANDIDATE_UNITS:
+            f = _UNIT_TO_HZ.get(unit, C_CM_PER_S) / C_CM_PER_S
+            counts[unit] = sum(1 for freq, unc, diff in checkable
+                               if abs(freq * f - diff) <= 3 * max(unc * f, UNC_FLOOR))
+        segments[tag] = max(_CANDIDATE_UNITS, key=lambda u: counts[u])
+        report[tag] = {"lines": len(checkable), **counts}
+    return segments, report
 
 
 def _mrt_data_lines(path):
