@@ -14,6 +14,15 @@ Outlier eval: average precision and precision/recall on held-out corrupted
 copies of the validation networks (5% injected corruptions; see corrupt.py).
 Deliberately not benchmarked against the legacy ratio-threshold heuristic
 (marvel_gnn_plan.md) — that heuristic is what this head replaces.
+
+Orphan-linkage eval: rank of the true attachment pair on held-out detachment
+samples of the validation networks (see linkage.py), then an advisory merge
+report on any real orphan components — never inserted into the solve.
+
+Label-correction eval: top-1 accuracy / MRR of the true (pre-corruption) upper
+level among candidate relabelings, on the recoverable QN-bump lines of the
+same held-out corrupted copies (see labelfix.py), then an advisory correction
+report on outlier-flagged lines of the real networks — never applied to data.
 """
 
 from pathlib import Path
@@ -24,8 +33,10 @@ import torch
 from marvel_gnn.core.network import split_components
 from marvel_gnn.core.parse import parse_mrt_levels, parse_mrt_transitions
 from marvel_gnn.core.uncertainty import marvel_solve
-from marvel_gnn.gnn.corrupt import corrupt, largest_component
+from marvel_gnn.gnn.corrupt import QN_BUMP, corrupt, largest_component
 from marvel_gnn.gnn.data import ERROR_SCALE, build_graph, refit_error_matrix
+from marvel_gnn.gnn.labelfix import correction_report, fix_metrics, fix_sample
+from marvel_gnn.gnn.linkage import link_bce, link_metrics, orphan_report, prepare_linked
 from marvel_gnn.gnn.model import MarvelGNN, nll_loss
 
 CO_DIR = Path(r"C:\Code\MARVEL\molecules\CO")
@@ -39,7 +50,12 @@ N_VAL_SAMPLES = 100
 N_TRAIN_CORRUPT = 30    # corrupted copies per training network (outlier)
 N_VAL_CORRUPT = 50      # val networks are tiny; more copies for stable stratified stats
 CORRUPT_PER_EPOCH = 6   # corrupted graphs sampled into each epoch's loss
+N_TRAIN_LINK = 30       # detachment samples per training network (orphan linkage)
+N_VAL_LINK = 30
+LINK_PER_EPOCH = 4      # detachment samples in each epoch's loss
 OUT_LOSS_WEIGHT = 10.0  # uncertainty-NLL gradients dominate the shared encoder otherwise
+LINK_LOSS_WEIGHT = 10.0
+FIX_LOSS_WEIGHT = 10.0
 EPOCHS = 1000
 
 
@@ -55,14 +71,17 @@ def prepare(iso, transitions, n_samples, seed):
 
 def prepare_corrupted(comp, n_graphs, seed, device):
     rng = np.random.default_rng(seed)
+    orig = np.array([t.upper for t in comp], dtype=object)
     graphs = []
     for _ in range(n_graphs):
         bad, kinds, mags = corrupt(comp, rng=rng)
-        bad, kinds, mags = largest_component(bad, kinds, mags)
-        g, _ = build_graph(bad)
+        bad, kinds, mags, orig_kept = largest_component(bad, kinds, mags, orig)
+        g, idx = build_graph(bad)
+        fix = fix_sample(bad, np.where(kinds == QN_BUMP)[0], g, idx,
+                         orig_upper=orig_kept, device=device)
         graphs.append((g.to(device),
                        torch.tensor(kinds > 0, dtype=torch.float32, device=device),
-                       kinds, mags))
+                       kinds, mags, fix))
     return graphs
 
 
@@ -91,7 +110,7 @@ def outlier_metrics(model, graphs):
     freq-shift recall stratified by shift amplitude (detectability floor)."""
     all_scores, all_kinds, all_mags, p_at_k = [], [], [], []
     with torch.no_grad():
-        for g, labels, kinds, mags in graphs:
+        for g, labels, kinds, mags, _ in graphs:
             logits = model.outlier_logits(g).cpu().numpy()
             all_scores.append(logits)
             all_kinds.append(kinds)
@@ -140,8 +159,14 @@ def main():
     val_bad = {iso: prepare_corrupted(comp, N_VAL_CORRUPT, seed=200 + i, device=device)
                for i, (iso, (comp, _, _)) in enumerate(zip(VAL_ISOS, val_set))}
 
-    n_pos = sum(labels.sum().item() for _, labels, _, _ in train_bad)
-    n_all = sum(len(labels) for _, labels, _, _ in train_bad)
+    train_link = []
+    for i, (comp, _, _) in enumerate(train_set):
+        train_link += prepare_linked(comp, N_TRAIN_LINK, seed=300 + i, device=device)
+    val_link = {iso: prepare_linked(comp, N_VAL_LINK, seed=400 + i, device=device)
+                for i, (iso, (comp, _, _)) in enumerate(zip(VAL_ISOS, val_set))}
+
+    n_pos = sum(labels.sum().item() for _, labels, *_ in train_bad)
+    n_all = sum(len(labels) for _, labels, *_ in train_bad)
     bce = torch.nn.BCEWithLogitsLoss(
         pos_weight=torch.tensor((n_all - n_pos) / n_pos, device=device))
 
@@ -156,7 +181,13 @@ def main():
         batch = rng.choice(len(train_bad), size=CORRUPT_PER_EPOCH, replace=False)
         out_loss = sum(bce(model.outlier_logits(train_bad[k][0]), train_bad[k][1])
                        for k in batch) / CORRUPT_PER_EPOCH
-        (unc_loss + OUT_LOSS_WEIGHT * out_loss).backward()
+        lbatch = rng.choice(len(train_link), size=LINK_PER_EPOCH, replace=False)
+        link_loss = sum(link_bce(model, train_link[k]) for k in lbatch) / LINK_PER_EPOCH
+        fixes = [train_bad[k] for k in batch if train_bad[k][4] is not None]
+        fix_loss = sum(torch.nn.functional.cross_entropy(model.fix_logits(g, fx), fx["target"])
+                       for g, *_, fx in fixes) / max(len(fixes), 1) if fixes else torch.zeros(())
+        (unc_loss + OUT_LOSS_WEIGHT * out_loss + LINK_LOSS_WEIGHT * link_loss
+         + FIX_LOSS_WEIGHT * fix_loss).backward()
         opt.step()
 
         if epoch % 50 == 0 or epoch == EPOCHS - 1:
@@ -164,8 +195,12 @@ def main():
             with torch.no_grad():
                 v_unc = sum(nll_loss(model.log_sigma(g), e) for _, g, e in val_set) / len(val_set)
             v_ap = np.mean([outlier_metrics(model, graphs)["ap"] for graphs in val_bad.values()])
+            v_mrr = np.mean([link_metrics(model, s)["mrr"] for s in val_link.values()])
+            v_fix = np.mean([fix_metrics(model, graphs)["acc"] for graphs in val_bad.values()])
             print(f"epoch {epoch:4d}  train unc {unc_loss.item():9.4f}  out {out_loss.item():.4f}"
-                  f"  | val unc NLL {v_unc.item():10.4f}  val outlier AP {v_ap:.3f}")
+                  f"  link {link_loss.item():.4f}  fix {fix_loss.item():.4f}"
+                  f"  | val unc NLL {v_unc.item():10.4f}  outlier AP {v_ap:.3f}"
+                  f"  link MRR {v_mrr:.3f}  fix acc {v_fix:.3f}")
             if v_unc.item() < best[0]:
                 best = (v_unc.item(), epoch,
                         {k: v.clone() for k, v in model.state_dict().items()})
@@ -212,7 +247,43 @@ def main():
         strat = "  ".join(f"{lo:.0f}-{hi:.0f}x: {r:.0%} (n={n})"
                           for lo, hi, n, r in m["freq_by_mag"])
         print(f"  freq-shift recall by amplitude: {strat}")
+
+        fm = fix_metrics(model, val_bad[iso])
+        print(f"== {iso} label correction ({fm['n']} recoverable QN-bump lines) ==")
+        print(f"  true upper: top-1 accuracy {fm['acc']:.1%}  MRR {fm['mrr']:.3f}"
+              f"  mean candidates {fm['n_cand']:.1f} (random {1.0 / fm['n_cand']:.1%})")
+
+        lm = link_metrics(model, val_link[iso])
+        print(f"== {iso} orphan linkage ({len(val_link[iso])} detachment samples) ==")
+        print(f"  true attachment pair: MRR {lm['mrr']:.3f}  hits@1 {lm['hits1']:.1%}"
+              f"  hits@5 {lm['hits5']:.1%}  median rank {lm['median_rank']:.0f}"
+              f" of {lm['n_pairs']:.0f} candidate pairs")
         print()
+
+    # advisory merge report on any REAL orphan components (never in the solve)
+    for iso, (comp, _, _) in zip(VAL_ISOS, val_set):
+        others = split_components(transitions[iso][0], minsize=2)[0][1:]
+        if not others:
+            print(f"{iso}: no real orphan components — network fully connected")
+            continue
+        print(f"== {iso} advisory orphan-merge report ({len(others)} real orphan "
+              f"components) — human literature review required ==")
+        for r in orphan_report(model, comp, others):
+            print(f"  orphan comp {r['orphan_component']}: ({r['orphan_level']})"
+                  f" ~ main ({r['main_level']})  score {r['score']:.2f}")
+
+    # advisory QN-correction report on the REAL (clean, published) networks:
+    # anything flagged here is an outlier-head false positive — the count is
+    # the report's practical noise floor. Never applied to source data.
+    for iso, (comp, _, _) in zip(VAL_ISOS, val_set):
+        rows = correction_report(model, comp, device=device)
+        print(f"== {iso} advisory QN-correction report ({len(rows)} outlier-flagged"
+              f" lines on the published network) — human literature review required ==")
+        for r in rows[:10]:
+            print(f"  {r['ref']}: upper ({r['upper']}) -> ({r['proposed_upper']})"
+                  f"  outlier p {r['outlier_p']:.2f}  window conf {r['confidence']:.2f}")
+        if len(rows) > 10:
+            print(f"  ... {len(rows) - 10} more")
 
 
 if __name__ == "__main__":

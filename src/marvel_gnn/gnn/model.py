@@ -1,8 +1,9 @@
 """Shared GNN encoder + task heads.
 
 One encoder, one lightweight head per task (marvel_gnn_plan.md): uncertainty
-calibration (node -> log sigma) and outlier detection (transition -> logit).
-Later heads (orphan linkage, label correction) read the same embeddings.
+calibration (node -> log sigma), outlier detection (transition -> logit),
+orphan linkage (level pair -> plausible-transition logit), and label
+correction (suspect transition x candidate upper -> logit).
 """
 
 import torch
@@ -10,6 +11,7 @@ from torch import nn
 from torch_geometric.nn import GATv2Conv
 
 from .data import EDGE_DIM, NODE_DIM
+from .labelfix import FIX_EXTRA
 
 
 class Encoder(nn.Module):
@@ -35,6 +37,11 @@ class MarvelGNN(nn.Module):
             nn.Linear(hidden, hidden), nn.ReLU(), nn.Linear(hidden, 1))
         self.outlier_head = nn.Sequential(
             nn.Linear(2 * hidden + EDGE_DIM, hidden), nn.ReLU(), nn.Linear(hidden, 1))
+        self.link_head = nn.Sequential(
+            nn.Linear(2 * hidden + 2, hidden), nn.ReLU(), nn.Linear(hidden, 1))
+        self.fix_head = nn.Sequential(
+            nn.Linear(2 * hidden + EDGE_DIM + FIX_EXTRA, hidden), nn.ReLU(),
+            nn.Linear(hidden, 1))
 
     def log_sigma(self, data):
         """Per-level log(sigma) in 1e-6 cm-1 units."""
@@ -49,6 +56,28 @@ class MarvelGNN(nn.Module):
         low = data.edge_index[1, 0::2]
         z = torch.cat([h[up], h[low], data.edge_attr[0::2]], dim=1)
         return self.outlier_head(z).squeeze(-1)
+
+    def link_logits(self, h_a, h_b, vj_a, vj_b):
+        """Plausible-transition logit for level-embedding pairs. Symmetric in
+        (a, b): absolute energy order across components is unknowable, so the
+        head sees only the sum and the difference magnitude of the embeddings,
+        plus the pair's |Δv|, |ΔJ| (scaled as in build_graph). The selection
+        rule ΔJ = ±1 is the strongest prior on which two levels can share a
+        real transition — too weak to recover from embeddings alone."""
+        z = torch.cat([h_a + h_b, (h_a - h_b).abs(), (vj_a - vj_b).abs()], dim=-1)
+        return self.link_head(z).squeeze(-1)
+
+    def fix_logits(self, data, fix):
+        """(n_suspects, max_candidates) logits over candidate upper-level
+        relabelings of suspect transitions (see labelfix.fix_sample). Padded
+        candidate slots are -inf, so softmax / cross-entropy ignore them."""
+        h = self.encoder(data)
+        c = fix["cand"].shape[1]
+        z = torch.cat([h[fix["cand"]],
+                       h[fix["lower"]].unsqueeze(1).expand(-1, c, -1),
+                       data.edge_attr[fix["edge_row"]].unsqueeze(1).expand(-1, c, -1),
+                       fix["extra"]], dim=-1)
+        return self.fix_head(z).squeeze(-1).masked_fill(~fix["mask"], float("-inf"))
 
 
 def nll_loss(log_sigma, errors):
