@@ -4,7 +4,8 @@ Narrower head on the outlier subset whose likely cause is QN mislabeling
 (marvel_gnn_plan.md): for a suspect transition it ranks candidate upper-level
 reassignments and proposes the best one. Trained on corrupt()'s QN_BUMP lines,
 where the pre-corruption upper is the known recovery target. Candidates are
-existing levels with the same v and J within +-2 of the current upper —
+existing levels with the same non-J tokens and J within +-2 of the current
+upper (j_pos gives the J token's position, as in corrupt()) —
 mirrors the corruption model (J off-by-one) with distractors; a true upper
 whose level vanished from the graph is unrecoverable by this head (the
 "recoverable subset" ceiling). Output is advisory only — a flagged suggestion
@@ -19,7 +20,8 @@ from marvel_gnn.gnn.data import build_graph
 FIX_EXTRA = 3  # per-candidate features: |dJ vs current upper|, |dJ vs lower|, energy-freq mismatch
 
 
-def fix_sample(transitions, suspects, graph, idx, orig_upper=None, device="cpu"):
+def fix_sample(transitions, suspects, graph, idx, orig_upper=None, device="cpu",
+               j_pos=1):
     """Candidate-correction bundle for the suspect transitions (indices into
     transitions). Returns padded tensors: cand/mask/extra (n, C[, FIX_EXTRA]),
     lower/edge_row (n,), rows (list of kept suspect indices), and target (n,)
@@ -36,10 +38,11 @@ def fix_sample(transitions, suspects, graph, idx, orig_upper=None, device="cpu")
     rows, cands, extras, targets = [], [], [], []
     for i in suspects:
         t = transitions[i]
-        v, ju = t.upper.split()
-        ju, jl = int(ju), int(t.lower.split()[1])
+        toks = t.upper.split()
+        ju, jl = int(toks[j_pos]), int(t.lower.split()[j_pos])
         cand = [idx[a] for d in (-2, -1, 1, 2)
-                for a in [f"{v} {ju + d}"] if a in idx and a != t.lower]
+                for a in [" ".join(toks[:j_pos] + [str(ju + d)] + toks[j_pos + 1:])]
+                if a in idx and a != t.lower]
         if not cand:
             continue
         if orig_upper is not None:
@@ -49,7 +52,7 @@ def fix_sample(transitions, suspects, graph, idx, orig_upper=None, device="cpu")
             targets.append(cand.index(true_node))
         ex = []
         for c in cand:
-            jc = int(levels[c].split()[1])
+            jc = int(levels[c].split()[j_pos])
             m = abs((energies[c] - energies[idx[t.lower]]) - t.freq)
             ex.append([abs(jc - ju) / 50.0, abs(jc - jl) / 50.0,
                        np.log10(1.0 + m / t.unc) / 4.0])
@@ -96,7 +99,7 @@ def fix_metrics(model, graphs):
             "n": len(ranks), "n_cand": float(np.mean(n_cand))}
 
 
-def correction_report(model, transitions, device="cpu"):
+def correction_report(model, transitions, device="cpu", j_pos=1):
     """Advisory QN-correction report on a real network: every line the outlier
     head flags (p > 0.5) gets the top-ranked upper-level relabeling from the
     candidate window. Scientific-integrity constraint (marvel_gnn_plan.md):
@@ -109,7 +112,7 @@ def correction_report(model, transitions, device="cpu"):
     with torch.no_grad():
         out_p = torch.sigmoid(model.outlier_logits(graph))
         suspects = (out_p > 0.5).nonzero(as_tuple=True)[0].cpu().numpy()
-        fix = fix_sample(transitions, suspects, graph, idx, device=device)
+        fix = fix_sample(transitions, suspects, graph, idx, device=device, j_pos=j_pos)
         if fix is None:
             return []
         p = torch.softmax(model.fix_logits(graph, fix), dim=1)

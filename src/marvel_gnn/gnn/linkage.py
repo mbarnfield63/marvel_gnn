@@ -14,7 +14,7 @@ import numpy as np
 import torch
 
 from marvel_gnn.core.solver import solve_energies
-from marvel_gnn.gnn.data import build_graph
+from marvel_gnn.gnn.data import MAX_QN, build_graph
 
 
 def detach_orphans(comp, n_detach=5, max_size=25, rng=None):
@@ -86,11 +86,11 @@ def link_bce(model, sample, n_neg=100):
     collide with the true pair — harmless label noise at these graph sizes."""
     main_graph, orphans = sample
     h_main = model.encoder(main_graph)
-    vj_main = main_graph.x[:, :2]  # build_graph cols 0,1 = v/10, J/50
+    vj_main = main_graph.x[:, :MAX_QN]  # build_graph's QN block
     logits, labels = [], []
     for og, oi, mi in orphans:
         h_o = model.encoder(og)
-        vj_o = og.x[:, :2]
+        vj_o = og.x[:, :MAX_QN]
         oj = torch.cat([torch.tensor([oi], device=h_o.device),
                         torch.randint(len(h_o), (n_neg,), device=h_o.device)])
         mj = torch.cat([torch.tensor([mi], device=h_main.device),
@@ -119,10 +119,10 @@ def link_metrics(model, samples):
     with torch.no_grad():
         for main_graph, orphans in samples:
             h_main = model.encoder(main_graph)
-            vj_main = main_graph.x[:, :2]
+            vj_main = main_graph.x[:, :MAX_QN]
             for og, oi, mi in orphans:
                 h_o = model.encoder(og)
-                s = _all_pair_logits(model, h_o, og.x[:, :2], h_main, vj_main)
+                s = _all_pair_logits(model, h_o, og.x[:, :MAX_QN], h_main, vj_main)
                 true = oi * len(h_main) + mi
                 ranks.append(1 + (s > s[true]).sum().item())
                 n_cands.append(len(s))
@@ -146,7 +146,7 @@ def orphan_report(model, main_transitions, orphan_comps, top_k=5):
     with torch.no_grad():
         mg = mg.to(device)
         h_main = model.encoder(mg)
-        vj_main = mg.x[:, :2]
+        vj_main = mg.x[:, :MAX_QN]
         for ci, comp in enumerate(orphan_comps):
             og, oidx = build_graph(comp)
             o_levels = list(oidx)
@@ -154,7 +154,7 @@ def orphan_report(model, main_transitions, orphan_comps, top_k=5):
             h_o = model.encoder(og)
             # ponytail: sigmoid score under 1:n_neg sampled training — the
             # rank is meaningful, the absolute value is not calibrated
-            p = torch.sigmoid(_all_pair_logits(model, h_o, og.x[:, :2], h_main, vj_main))
+            p = torch.sigmoid(_all_pair_logits(model, h_o, og.x[:, :MAX_QN], h_main, vj_main))
             for r in torch.argsort(p, descending=True)[:top_k].tolist():
                 rows.append({"orphan_component": ci,
                              "orphan_level": o_levels[r // len(h_main)],

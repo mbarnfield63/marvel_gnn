@@ -3,6 +3,7 @@ import numpy as np
 import torch
 
 from marvel_gnn.core.parse import Transition
+from marvel_gnn.gnn.data import MAX_QN
 from marvel_gnn.gnn.linkage import detach_orphans, link_bce, link_metrics, prepare_linked
 from marvel_gnn.gnn.model import MarvelGNN
 
@@ -49,7 +50,7 @@ def test_detach_orphans():
 def test_link_head_symmetric():
     model = MarvelGNN(hidden=16, layers=2)
     h_a, h_b = torch.randn(4, 16), torch.randn(4, 16)
-    vj_a, vj_b = torch.randn(4, 2), torch.randn(4, 2)
+    vj_a, vj_b = torch.randn(4, MAX_QN), torch.randn(4, MAX_QN)
     assert torch.allclose(model.link_logits(h_a, h_b, vj_a, vj_b),
                           model.link_logits(h_b, h_a, vj_b, vj_a))
 

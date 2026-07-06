@@ -10,7 +10,7 @@ import torch
 from torch import nn
 from torch_geometric.nn import GATv2Conv
 
-from .data import EDGE_DIM, NODE_DIM
+from .data import EDGE_DIM, MAX_QN, NODE_DIM
 from .labelfix import FIX_EXTRA
 
 
@@ -38,7 +38,7 @@ class MarvelGNN(nn.Module):
         self.outlier_head = nn.Sequential(
             nn.Linear(2 * hidden + EDGE_DIM, hidden), nn.ReLU(), nn.Linear(hidden, 1))
         self.link_head = nn.Sequential(
-            nn.Linear(2 * hidden + 2, hidden), nn.ReLU(), nn.Linear(hidden, 1))
+            nn.Linear(2 * hidden + MAX_QN, hidden), nn.ReLU(), nn.Linear(hidden, 1))
         self.fix_head = nn.Sequential(
             nn.Linear(2 * hidden + EDGE_DIM + FIX_EXTRA, hidden), nn.ReLU(),
             nn.Linear(hidden, 1))
@@ -57,14 +57,15 @@ class MarvelGNN(nn.Module):
         z = torch.cat([h[up], h[low], data.edge_attr[0::2]], dim=1)
         return self.outlier_head(z).squeeze(-1)
 
-    def link_logits(self, h_a, h_b, vj_a, vj_b):
+    def link_logits(self, h_a, h_b, qn_a, qn_b):
         """Plausible-transition logit for level-embedding pairs. Symmetric in
         (a, b): absolute energy order across components is unknowable, so the
         head sees only the sum and the difference magnitude of the embeddings,
-        plus the pair's |Δv|, |ΔJ| (scaled as in build_graph). The selection
-        rule ΔJ = ±1 is the strongest prior on which two levels can share a
-        real transition — too weak to recover from embeddings alone."""
-        z = torch.cat([h_a + h_b, (h_a - h_b).abs(), (vj_a - vj_b).abs()], dim=-1)
+        plus the pair's per-token |ΔQN| (the MAX_QN-wide block from
+        build_graph; padded slots differ by 0). The selection rule ΔJ = ±1 is
+        the strongest prior on which two levels can share a real transition —
+        too weak to recover from embeddings alone."""
+        z = torch.cat([h_a + h_b, (h_a - h_b).abs(), (qn_a - qn_b).abs()], dim=-1)
         return self.link_head(z).squeeze(-1)
 
     def fix_logits(self, data, fix):

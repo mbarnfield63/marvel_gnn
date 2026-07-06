@@ -1,8 +1,11 @@
 """Featurization of a solved spectroscopic component + masked-refit training
 samples for the uncertainty-calibration head.
 
-Diatomic (v, J) schema only for now — generalize only after this head is
-validated on CO (see marvel_gnn_plan.md).
+Schema-oblivious QN handling: an assignment's space-separated tokens fill a
+fixed MAX_QN-wide block (zero-padded, e/f parity letters -> 0/1), plus one
+token-count column so mixed-schema training can tell a padded zero from a
+real one. Token *order* differs per schema (CO: v J; CO2 CDSD: J v1 v2 l2 v3
+r e/f) — only corrupt() and labelfix need to know which token is J, via j_pos.
 
 Training signal: mask a random fraction of transitions, re-solve the component
 still containing the ground level, and record how far each surviving level
@@ -20,8 +23,21 @@ from marvel_gnn.core.solver import level_index, solve_energies
 
 ERROR_SCALE = 1e6  # errors/sigmas are handled in 1e-6 cm-1 units
 
-NODE_DIM = 7
+MAX_QN = 8   # QN slots; longest in-scope schema is 7 (CO2 CDSD) + 1 spare
+NODE_DIM = MAX_QN + 6
 EDGE_DIM = 5
+
+_TOKEN = {"e": 0.0, "f": 1.0}  # parity letters in CDSD-style assignments
+
+
+def qn_array(assignments):
+    """(n, MAX_QN) float array of QN tokens in assignment order, zero-padded.
+    Unknown non-numeric tokens fail loudly (float raises)."""
+    out = np.zeros((len(assignments), MAX_QN))
+    for r, a in enumerate(assignments):
+        toks = a.split()
+        out[r, :len(toks)] = [float(_TOKEN.get(s, s)) for s in toks]
+    return out
 
 
 def edge_leverages(transitions, idx):
@@ -61,11 +77,8 @@ def build_graph(transitions):
     idx = level_index(transitions)
     n = len(idx)
 
-    v = np.zeros(n)
-    j = np.zeros(n)
-    for a, i in idx.items():
-        v_str, j_str = a.split()
-        v[i], j[i] = float(v_str), float(j_str)
+    qn = qn_array(list(idx)) / 50.0  # x cols 0..MAX_QN-1 (heads slice these)
+    nqn = len(next(iter(idx)).split())
 
     e_arr = np.array([energies[a] for a in idx])
     incident = [[] for _ in range(n)]
@@ -75,8 +88,8 @@ def build_graph(transitions):
     incident = [np.array(u) for u in incident]
 
     x = np.column_stack([
-        v / 10.0,
-        j / 50.0,
+        qn,
+        np.full(n, nqn / MAX_QN),
         np.log1p([len(u) for u in incident]),
         np.array([np.log10(u.min()) for u in incident]) / 10.0,
         np.array([np.log10(np.median(u)) for u in incident]) / 10.0,

@@ -15,11 +15,14 @@ FREQ_SHIFT = 1  # kind codes; 0 = clean
 QN_BUMP = 2
 
 
-def corrupt(transitions, fraction=0.05, rng=None):
+def corrupt(transitions, fraction=0.05, rng=None, j_pos=1):
     """Corrupt a random subset of transitions. Returns (corrupted, kinds, mags):
     kinds an int8 array (0 clean, FREQ_SHIFT, or QN_BUMP), mags the shift
     magnitude in units of unc (0 for clean and QN_BUMP lines) — used for
     amplitude-stratified eval.
+
+    j_pos is the J token's position in the assignment (CO "v J": 1, the
+    default; CO2 CDSD "J v1 v2 l2 v3 r e/f": 0).
 
     Two failure modes, equal odds per corrupted line:
     - FREQ_SHIFT: frequency shifted by +-(5..500)x unc, log-uniform magnitude
@@ -41,11 +44,12 @@ def corrupt(transitions, fraction=0.05, rng=None):
 
         new_upper = None
         if rng.random() < 0.5:
-            v, j = t.upper.split()
+            toks = t.upper.split()
+            j = int(toks[j_pos])
             delta = int(rng.choice([-1, 1]))
             for d in (delta, -delta):
-                cand = f"{v} {int(j) + d}"
-                if int(j) + d >= 0 and cand != t.lower:
+                cand = " ".join(toks[:j_pos] + [str(j + d)] + toks[j_pos + 1:])
+                if j + d >= 0 and cand != t.lower:
                     new_upper = cand
                     break
         if new_upper is not None:
