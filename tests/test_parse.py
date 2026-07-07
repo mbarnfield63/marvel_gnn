@@ -5,7 +5,6 @@ import pytest
 from marvel_gnn.core.parse import (
     C_CM_PER_S,
     infer_segments,
-    load_segments,
     parse_mrt_levels,
     parse_mrt_transitions,
     parse_native,
@@ -89,10 +88,8 @@ def test_parse_native_rejects_self_transition(tmp_path):
 def test_segment_unit_conversion(tmp_path):
     tr = tmp_path / "tr.txt"
     tr.write_text("115271.2018 0.005 0.005 0 1 0 0 70RoDo.1\n")
-    seg = tmp_path / "seg.txt"
-    seg.write_text("70RoDo MHz\n")
 
-    kept, _ = parse_native(tr, nqn=2, segments=load_segments(seg))
+    kept, _ = parse_native(tr, nqn=2, segments={"70RoDo": "MHz"})
     assert kept[0].freq == pytest.approx(115271.2018e6 / C_CM_PER_S)
     assert kept[0].unc == pytest.approx(0.005e6 / C_CM_PER_S)
 
@@ -100,10 +97,8 @@ def test_segment_unit_conversion(tmp_path):
 def test_segment_missing_tag_raises(tmp_path):
     tr = tmp_path / "tr.txt"
     tr.write_text("100.0 1e-4 1e-4 0 1 0 0 20AaBb.1\n")
-    seg = tmp_path / "seg.txt"
-    seg.write_text("99ZzYy cm-1\n")
     with pytest.raises(KeyError, match="missing segment"):
-        parse_native(tr, nqn=2, segments=load_segments(seg))
+        parse_native(tr, nqn=2, segments={"99ZzYy": "cm-1"})
 
 
 CO2_DIR = Path(r"C:\Code\MARVEL\molecules\CO2")

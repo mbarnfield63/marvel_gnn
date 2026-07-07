@@ -134,9 +134,9 @@ def link_metrics(model, samples):
             "n_pairs": float(np.mean(n_cands))}
 
 
-def orphan_report(model, main_transitions, orphan_comps, top_k=5):
+def orphan_report(model, main_transitions, orphan_comps):
     """Advisory ranked candidate-merge report: for each orphan component, the
-    top_k (orphan level, main level) pairs by link score. Scientific-integrity
+    top five (orphan level, main level) pairs by link score. Scientific-integrity
     constraint (marvel_gnn_plan.md): for human literature review only — never
     auto-inserted into the solve; a GNN prediction is not a measurement."""
     device = next(model.parameters()).device
@@ -155,7 +155,7 @@ def orphan_report(model, main_transitions, orphan_comps, top_k=5):
             # ponytail: sigmoid score under 1:n_neg sampled training — the
             # rank is meaningful, the absolute value is not calibrated
             p = torch.sigmoid(_all_pair_logits(model, h_o, og.x[:, :MAX_QN], h_main, vj_main))
-            for r in torch.argsort(p, descending=True)[:top_k].tolist():
+            for r in torch.argsort(p, descending=True)[:5].tolist():
                 rows.append({"orphan_component": ci,
                              "orphan_level": o_levels[r // len(h_main)],
                              "main_level": m_levels[r % len(h_main)],

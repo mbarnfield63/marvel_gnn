@@ -32,16 +32,13 @@ class Encoder(nn.Module):
 class MarvelGNN(nn.Module):
     def __init__(self, hidden=64, layers=3):
         super().__init__()
+        def head(d):
+            return nn.Sequential(nn.Linear(d, hidden), nn.ReLU(), nn.Linear(hidden, 1))
         self.encoder = Encoder(hidden, layers)
-        self.unc_head = nn.Sequential(
-            nn.Linear(hidden, hidden), nn.ReLU(), nn.Linear(hidden, 1))
-        self.outlier_head = nn.Sequential(
-            nn.Linear(2 * hidden + EDGE_DIM, hidden), nn.ReLU(), nn.Linear(hidden, 1))
-        self.link_head = nn.Sequential(
-            nn.Linear(2 * hidden + MAX_QN, hidden), nn.ReLU(), nn.Linear(hidden, 1))
-        self.fix_head = nn.Sequential(
-            nn.Linear(2 * hidden + EDGE_DIM + FIX_EXTRA, hidden), nn.ReLU(),
-            nn.Linear(hidden, 1))
+        self.unc_head = head(hidden)
+        self.outlier_head = head(2 * hidden + EDGE_DIM)
+        self.link_head = head(2 * hidden + MAX_QN)
+        self.fix_head = head(2 * hidden + EDGE_DIM + FIX_EXTRA)
 
     def log_sigma(self, data):
         """Per-level log(sigma) in 1e-6 cm-1 units."""

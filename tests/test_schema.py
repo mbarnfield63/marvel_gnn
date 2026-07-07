@@ -32,8 +32,8 @@ def cdsd_ladder(n=10):
 def test_qn_array_pads_and_maps_parity():
     q = qn_array(["3 0 1 1 0 2 f", "0 1"])
     assert q.shape == (2, MAX_QN)
-    assert q[0].tolist() == [3, 0, 1, 1, 0, 2, 1, 0]
-    assert q[1].tolist() == [0, 1, 0, 0, 0, 0, 0, 0]
+    assert q[0].tolist() == [3, 0, 1, 1, 0, 2, 1]
+    assert q[1].tolist() == [0, 1, 0, 0, 0, 0, 0]
 
 
 def test_build_graph_and_heads_on_7_token_schema():

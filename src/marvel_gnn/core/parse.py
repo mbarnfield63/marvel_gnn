@@ -39,12 +39,6 @@ class Level:
     n_trans: int    # number of incident transitions
 
 
-def load_segments(path):
-    """Segment file: whitespace-separated (tag, unit) pairs -> {tag: unit}."""
-    tokens = Path(path).read_text().split()
-    return dict(zip(tokens[::2], tokens[1::2]))
-
-
 def parse_native(path, nqn=None, segments=None):
     """Parse a native MARVEL transitions file.
 

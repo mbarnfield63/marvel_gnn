@@ -3,7 +3,7 @@ import math
 import pytest
 
 from marvel_gnn.core.parse import Transition
-from marvel_gnn.core.solver import flag_bad_lines, solve_energies
+from marvel_gnn.core.solver import solve_energies
 from marvel_gnn.core.uncertainty import (
     bootstrap_unc,
     combined_unc,
@@ -62,18 +62,3 @@ def test_marvel_solve_end_to_end():
     assert result["a"] == (0.0, 0.0)
     assert result["c"][0] == pytest.approx(15.0)
     assert result["c"][1] >= 0.0
-
-
-def test_flag_bad_lines():
-    # consistent triangle plus one line off by 0.05 (50x its unc of 1e-3)
-    ts = [tr("b", "a", 10.0), tr("c", "b", 5.0), tr("c", "a", 15.0), tr("c", "a", 15.05)]
-    flagged = flag_bad_lines(ts, solve_energies(ts))
-    by_cat = {cat for _, _, cat in flagged}
-    assert "VERY BAD" in by_cat  # the injected line, ratio ~ 37-50
-    # the consistent lines get dragged slightly, may flag as WRONG, but never VERY BAD_100+
-    assert not {"VERY BAD_100", "VERY BAD_1000"} & by_cat
-
-
-def test_flag_bad_lines_clean_network_is_quiet():
-    ts = [tr("b", "a", 10.0), tr("c", "b", 5.0), tr("c", "a", 15.0)]
-    assert flag_bad_lines(ts, solve_energies(ts)) == []

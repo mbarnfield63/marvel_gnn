@@ -53,20 +53,3 @@ def solve_energies(transitions, unc=None):
     x -= x.min()
 
     return {assignment: x[i] for assignment, i in idx.items()}
-
-
-def flag_bad_lines(transitions, energies):
-    """Legacy outlier flagging: |residual| > unc, bucketed by ratio as in
-    getCategory() (MARVEL4.1.cpp). Returns [(transition, ratio, category)].
-    """
-    flagged = []
-    for t in transitions:
-        residual = abs(t.freq - (energies[t.upper] - energies[t.lower]))
-        if residual > t.unc:
-            ratio = residual / t.unc
-            category = ("WRONG" if ratio <= 10 else
-                        "VERY BAD" if ratio <= 100 else
-                        "VERY BAD_100" if ratio <= 1000 else
-                        "VERY BAD_1000")
-            flagged.append((t, ratio, category))
-    return flagged

@@ -23,7 +23,7 @@ from marvel_gnn.core.solver import level_index, solve_energies
 
 ERROR_SCALE = 1e6  # errors/sigmas are handled in 1e-6 cm-1 units
 
-MAX_QN = 8   # QN slots; longest in-scope schema is 7 (CO2 CDSD) + 1 spare
+MAX_QN = 7   # QN slots; longest in-scope schema is 7 (CO2 CDSD)
 NODE_DIM = MAX_QN + 6
 EDGE_DIM = 5
 
