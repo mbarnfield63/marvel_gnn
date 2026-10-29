@@ -16,6 +16,8 @@ prediction is interpretable as the level's uncertainty in the actual network.
 
 import numpy as np
 import torch
+from scipy.sparse import coo_matrix, csc_matrix
+from scipy.sparse.linalg import splu
 from torch_geometric.data import Data
 
 from marvel_gnn.core.network import split_components
@@ -40,6 +42,30 @@ def qn_array(assignments):
     return out
 
 
+def _selected_inverse(lower, d):
+    """Entries of A^{-1} on the pattern of A's LDL^T factor (Takahashi
+    recursion): `lower` unit-lower CSC with sorted indices, `d` the pivots.
+    Returns a CSC matrix with `lower`'s pattern holding the lower triangle of
+    A^{-1}. Exact; cost ~ sum over columns of nnz(col)^2, so it stays cheap
+    while the factor has little fill (true of spectroscopic networks)."""
+    n = len(d)
+    ptr, rows, vals = lower.indptr, lower.indices, lower.data
+    zv = np.empty_like(vals)
+    for j in range(n - 1, -1, -1):
+        a, b = ptr[j], ptr[j + 1]
+        s, l = rows[a + 1:b], vals[a + 1:b]  # below-diagonal pattern of column j
+        zs = np.empty((len(s), len(s)))      # A^{-1}[s, s], from later columns
+        for c, k in enumerate(s):
+            r = rows[ptr[k]:ptr[k + 1]]
+            pos = ptr[k] + np.searchsorted(r, s[c:])
+            zs[c:, c] = zv[pos]
+            zs[c, c + 1:] = zs[c + 1:, c]
+        col = -zs @ l
+        zv[a + 1:b] = col
+        zv[a] = 1.0 / d[j] - l @ col
+    return csc_matrix((zv, rows, ptr), shape=lower.shape)
+
+
 def edge_leverages(transitions, idx):
     """Leverage h of each transition in the weighted least-squares solve.
 
@@ -47,23 +73,34 @@ def edge_leverages(transitions, idx):
     h -> 1 means the solve absorbs the line into the level energies (a bridge
     is exactly 1 — any frequency shift there is undetectable from residuals);
     h -> 0 means the line is highly redundant. sum(h) = n_levels - 1.
-    Computed on the reduced system (level 0 pinned, as in solve_energies);
-    components here are small (<1k levels), so a dense inverse is fine.
+    Computed on the reduced system (level 0 pinned, as in solve_energies).
+    Only the diagonal and edge entries of the inverse are needed, so it uses
+    a sparse LDL^T plus selected inversion instead of a dense n x n inverse
+    (12C2H4, 11.6k levels: 0.36 s vs 24 s / 5 GiB dense).
     """
     n = len(idx)
+    ui = np.array([idx[t.upper] for t in transitions])
+    li = np.array([idx[t.lower] for t in transitions])
     w = np.array([1.0 / (t.unc * t.unc) for t in transitions])
-    lap = np.zeros((n, n))
-    for t, wi in zip(transitions, w):
-        i, j = idx[t.upper], idx[t.lower]
-        lap[i, i] += wi
-        lap[j, j] += wi
-        lap[i, j] -= wi
-        lap[j, i] -= wi
-    g = np.zeros((n, n))
-    g[1:, 1:] = np.linalg.inv(lap[1:, 1:])
-    h = np.array([w[k] * (g[i, i] + g[j, j] - 2.0 * g[i, j])
-                  for k, t in enumerate(transitions)
-                  for i, j in [(idx[t.upper], idx[t.lower])]])
+    lap = coo_matrix((np.r_[w, w, -w, -w], (np.r_[ui, li, ui, li], np.r_[ui, li, li, ui])),
+                     shape=(n, n)).tocsc()
+    # symmetric mode with no pivoting on an SPD matrix gives L U = L (D L^T)
+    lu = splu(lap[1:, 1:], permc_spec="MMD_AT_PLUS_A", diag_pivot_thresh=0.0,
+              options={"SymmetricMode": True})
+    assert (lu.perm_r == lu.perm_c).all()
+    lower = lu.L.tocsc()
+    lower.sort_indices()
+    z = _selected_inverse(lower, lu.U.diagonal())
+
+    pos = np.r_[-1, lu.perm_c]  # level -> factor position; -1 = pinned (G row 0)
+    p, q = pos[ui], pos[li]
+    lo, hi = np.minimum(p, q), np.maximum(p, q)
+    zd = np.r_[z.diagonal(), 0.0]  # zd[-1] = 0 for the pinned level
+    gij = np.zeros(len(transitions))
+    ok = lo >= 0
+    gij[ok] = np.asarray(z[hi[ok], lo[ok]]).ravel()
+    h = w * (zd[p] + zd[q] - 2.0 * gij)
+    assert np.isclose(h.sum(), n - 1, rtol=1e-6)  # catches a pattern miss
     return np.clip(h, 0.0, 1.0)
 
 

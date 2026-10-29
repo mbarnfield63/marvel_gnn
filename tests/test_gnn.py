@@ -93,3 +93,26 @@ def test_training_reduces_loss():
         opt.step()
         first = first if first is not None else loss.item()
     assert loss.item() < first
+
+
+def test_edge_leverages_match_dense_inverse():
+    # random graph with a spread of uncertainties: sparse selected inverse
+    # must reproduce the dense reduced-Laplacian inverse
+    rng = np.random.default_rng(0)
+    n = 40
+    ts = [tr(f"0 {i + 1}", f"0 {rng.integers(0, i + 1)}", 1.0,
+             unc=10 ** rng.uniform(-6, -2)) for i in range(n - 1)]
+    ts += [tr(f"0 {a}", f"0 {b}", 1.0, unc=10 ** rng.uniform(-6, -2))
+           for a, b in rng.integers(0, n, size=(60, 2)) if a != b]
+    idx = level_index(ts)
+    lap = np.zeros((n, n))
+    for t in ts:
+        i, j, w = idx[t.upper], idx[t.lower], 1.0 / t.unc**2
+        lap[[i, j], [i, j]] += w
+        lap[i, j] -= w
+        lap[j, i] -= w
+    g = np.zeros((n, n))
+    g[1:, 1:] = np.linalg.inv(lap[1:, 1:])
+    dense = np.array([(g[i, i] + g[j, j] - 2 * g[i, j]) / t.unc**2
+                      for t in ts for i, j in [(idx[t.upper], idx[t.lower])]])
+    assert np.allclose(edge_leverages(ts, idx), np.clip(dense, 0, 1), atol=1e-9)
