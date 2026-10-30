@@ -1,0 +1,34 @@
+publication	usable	molecule	isotopologue	version	n_unc_cols	qn	lines	levels	n_comp	largest	lines_largest	out_levels	pub_match	pub_within_unc	negated	neg_in_largest	neg_whole_source	N_main	unc_raised	U_main	raised_at_resid	unc_lowered	ed_inconsistent	unc_missing	self_loops	dup_tags	sources	non_cm1_lines	unit_inferred	unit_mismatch	noted	notes_top	problems
+09MiTaPu.H2O	no	H2O	1H-2H-18O	unknown	1	v1v2v3 J Ka Kc	970	615	17	297	476	1699	296/297	0.490	0	0	0 (0 src)	0					182	0	0	0	2	0	0		82	BLD:82	
+20SyMc	outlier	CN	12C-14N	unknown	1	vibronic v J	40516	8480	130	8093	40243	8470	8083/8083	1.000	183	183	0 (0 src)	183					0	0	0	0	23	0	0		0		
+20YiOwTe	outlier	CaOH	40Ca-16O-1H	unknown	1	vibronic J ef v1 v2 L v3 F	3240	1955	1	1955	3240	1955	1955/1955	0.948	16	16	0 (0 src)	16					0	0	0	1	17	0	1		3	-X0.1:1; -X0.2:1; -X0.3:1	
+21BoShYuTe	outlier	AlO	27Al-16O	3	1	state v J N F ef	23972	6588	29	6525	23934	6485	6485/6485	1.000	1499	1499	0 (0 src)	1499					0	0	0	0	10	0	0		0		
+22BoAkHoYuTe	outlier+uncertainty	VO	51V-16O	4	2	state comp omega parity v J	9344	5113	121	4813	9164	4813	4813/4813	1.000	54	54	0 (0 src)	54	1337	1337	1333	0	0	0	0	0	18	0	0		0		
+22BoAkHoYuTe	outlier+uncertainty	VO	51V-16O	4	2	state comp omega ef v J F	8082	6015	152	5703	7921	5702	5695/5702	0.999	41	41	0 (0 src)	41	241	241	240	0	19	0	0	0	6	0	0		0		
+22RaFuFu_HOCl	outlier	HOCl	1H-16O-35Cl	unknown	1	v1 v2 v3 J Ka Kc	21464	6374	3	6370	21462	6277	6277/6277	1.000	147	147	0 (0 src)	147					333	0	0	0	19	0	0		0		
+23BoMiZoPo	outlier+uncertainty	H3+	1H3_p	4	2	v1 v2 L2 J G U K gamma_rve	1719	796	40	705	1640	703	703/703	1.000	63	60	0 (0 src)	60	113	113	107	0	0	0	3	0	35	94	0		0		
+23BoMiZoPo	uncertainty	H2D+	1H2-2H_p	4	2	v1 v2 v3 J Ka Kc	210	123	7	109	202	109	109/109	1.000	2	2	0 (0 src)	2	19	19	19	0	0	0	0	0	17	25	0		0		
+23BoMiZoPo	no	D2H+	1H-2H2_p	4	2	v1 v2 v3 J Ka Kc	210	132	8	115	200	115	115/115	0.009	0	0	0 (0 src)	0	0	0		0	120	0	0	0	14	49	0	05AmHi:MHz->cm-1 08AsRiMuWi:MHz->cm-1	0		
+23BrYuTe	outlier	SO	32S-16O	unknown	2	state J ef v F	50105	9469	190	8695	49206	8557	8557/8557	0.997	1134	388	600 (4 src)	384	0	0		0	0	0	0	0	30	0	0		0		
+24AlIbFu	outlier+uncertainty	CO2	16O-12C-18O	unknown	2	J v1 v2 l2 v3 r ef	33657	9090	123	8787	33473	8787	8787/8787	1.000	95	95	0 (0 src)	95	7936	7936	5010	35	0	0	0	0	53	7	0		0		
+24AzAzAb	uncertainty	CO2	12C-18O2	unknown	2	J v1 v2 l2 v3 r ef	11654	4191	104	3923	11390	3923	3923/3923	1.000	0	0	0 (0 src)	0	1361	1361	1180	4	0	0	0	0	20	264	0		7	-relab:7	
+24AzAzAb	uncertainty	CO2	17O-12C-18O	unknown	2	J v1 v2 l2 v3 r ef	11339	4546	71	4318	11174	4318	4318/4318	1.000	0	0	0 (0 src)	0	1219	1219	1164	0	0	0	0	0	17	0	0		1	-typo?:1	
+24AzAzAb	uncertainty	CO2	13C-18O2	unknown	2	J v1 v2 l2 v3 r ef	2426	1170	36	1058	2346	1058	1058/1058	1.000	0	0	0 (0 src)	0	229	229	192	0	0	0	0	0	14	264	0		0		
+24IbAlFu_CO2636	outlier+uncertainty	CO2	13C-16O2	unknown	2	J v1 v2 l2 v3 r ef	20798	6538	103	6320	20670	6318	6318/6318	1.000	37	29	0 (0 src)	29	6033	6033	4030	1309	0	0	0	0	62	32	0		0		
+24McPeSyBo	outlier	TiO	48Ti-16O	4	2	state J v	62935	12510	83	12300	62801	12164	12164/12164	1.000	1426	1416	0 (0 src)	1416	0	0		0	817	0	0	0	31	16	0		0		
+24SeElYu_PN	outlier+uncertainty	PN	31P-14N	unknown	2	state v J ef	5941	1689	11	1662	5920	1208	1208/1208	0.985	3077	3077	1382 (1 src)	1695	252	252	194	0	83	0	0	0	9	0	0		0		
+25AzAlAb	outlier+uncertainty	CO2	12C-16O2	unknown	2	J v1 v2 l2 v3 r ef	44827	8917	181	8294	44333	8268	8268/8268	1.000	368	349	65 (1 src)	284	11283	11283	9483	4	48	0	0	0	146	1459	0		10	-relab:8; ?typo:1; -typo:1	
+25AzAlTe	uncertainty	CO2	17O-13C-17O	unknown	2	J v1 v2 l2 v3 r ef	1831	1132	106	877	1664	877	877/877	1.000	0	0	0 (0 src)	0	205	205	170	0	8	0	0	0	7	0	0		0		
+25AzAlTe	uncertainty	CO2	17O-13C-18O	unknown	2	J v1 v2 l2 v3 r ef	2058	1185	91	945	1890	945	945/945	1.000	0	0	0 (0 src)	0	290	290	258	0	1	0	0	0	12	0	0		0		
+25AzTeYu	outlier+uncertainty	CO2	16O-13C-18O	unknown	2	J v1 v2 l2 v3 r ef	12362	4405	141	3975	12009	3975	3975/3975	1.000	21	21	0 (0 src)	21	2513	2513	2219	0	0	0	0	0	37	0	0		30	-relab:30	
+25MaAzTe	uncertainty	CO2	16O-13C-17O	unknown	2	J v1 v2 l2 v3 r ef	5053	2188	84	1960	4903	1960	1960/1960	1.000	0	0	0 (0 src)	0	810	810	600	0	5	0	0	0	20	0	0		17	-relab:17	
+25MaAzTe	outlier+uncertainty	CO2	12C-17O2	unknown	2	J v1 v2 l2 v3 r ef	10256	3504	67	3322	10140	3278	3278/3278	1.000	90	85	0 (0 src)	85	2406	2406	1965	17	9	0	0	0	17	242	0		0		
+25MaElAb	outlier+uncertainty	CO	12C-16O	unknown	2	v J	19399	2500	52	2295	19233	2293	2293/2293	1.000	12	12	0 (0 src)	12	3783	3783	3768	0	11	0	0	0	68	581	0		0		
+25ObAzTe	outlier+uncertainty	CO2	16O-12C-17O	unknown	2	J v1 v2 l2 v3 r ef	16224	5281	95	5040	16076	5036	5036/5036	1.000	103	103	0 (0 src)	103	3242	3242	2611	0	0	0	0	0	31	0	0		0		
+26GrDaPo	no	CO	12C-17O	4	1	v J	90	85	13	34	51	33	33/33	1.000	1	1	0 (0 src)	1					7	0	0	0	10	4	0		0		
+26GrDaPo	no	CO	12C-18O	4	1	v J	1461	766	76	498	1253	498	498/498	1.000	7	7	7 (1 src)	0					96	0	0	0	16	26	0		0		
+26GrDaPo	outlier	CO	13C-16O	4	1	v J	3731	1216	84	863	3397	863	863/863	1.000	15	15	0 (0 src)	15					288	0	0	0	19	23	0		0		
+26GrDaPo	no	CO	13C-17O	4	1	v J	58	45	1	45	58	45	45/45	0.956	0	0	0 (0 src)	0					12	0	0	0	6	3	0		0		
+26GrDaPo	no	CO	13C-18O	4	1	v J	728	517	52	345	607	345	345/345	1.000	0	0	0 (0 src)	0					3	0	0	0	9	7	0		0		
+24TeFuYu	outlier+uncertainty	N2O	14N2-16O	unknown	2	q1 q2 q3 ef J	67930	18345	154	17662	67374	17561	17561/17561	1.000	635	634	2 (1 src)	632	15615	15615	13429	2	14	0	0	0	91	1030	91		0		
+MARVEL_network@0b56238	outlier+uncertainty (key)	C2H4	12C2H4	4 (v1)	key	v1..v12 J Ka Kc	50611	12109	139	11687					641		54 (1 src, 58AlPl)	625	827	827												key: {'assume_unc': 6, 'scale': 5, 'exclude': 2, 'negate': 550, 'set_unc': 827}; source negations 91	6 sources blank unc (policy-filled)

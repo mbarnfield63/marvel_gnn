@@ -1,0 +1,88 @@
+20SyMc:12C-14N:3                           N=  183 X=    0 | AP_ties i 0.534 ii 0.527 iv 0.698 iv2 0.525 R 0.005 | AP i 0.534 ii 0.527 iv 0.707 iv' 0.533 R 0.004 rand 0.005 | iv B1 L137 R0 H45 | iv' k'=111 L101 R0 H81 | rule-applic 1.00 fired-neg 0
+20YiOwTe:40Ca-16O-1H:8                     N=   16 X=    0 | AP_ties i 0.916 ii 0.545 iv 1.000 iv2 0.938 R 0.005 | AP i 0.916 ii 0.545 iv 1.000 iv' 0.938 R 0.003 rand 0.005 | iv B0 L16 R0 H0 | iv' k'=15 L15 R0 H1 | rule-applic 1.00 fired-neg 3
+21BoShYuTe:27Al-16O:6                      N= 1499 X=    0 | AP_ties i 0.483 ii 0.453 iv 0.841 iv2 0.424 R 0.062 | AP i 0.483 ii 0.453 iv 0.868 iv' 0.533 R 0.101 rand 0.063 | iv B0 L1309 R0 H190 | iv' k'=627 L599 R6 H894 | rule-applic 1.00 fired-neg 2428
+22BoAkHoYuTe:51V-16O:6                     N=   54 X=    0 | AP_ties i 0.441 ii 0.328 iv 0.465 iv2 0.630 R 0.014 | AP i 0.442 ii 0.329 iv 0.467 iv' 0.630 R 0.025 rand 0.006 | iv B0 L33 R1 H20 | iv' k'=162 L51 R1 H2 | rule-applic 1.00 fired-neg 30
+                                           U=1337 pool=9110 AUROC 1/unc 0.471 i 0.869 ii 0.835 s_src 0.561 P 0.874 P* 0.879 | rho P 0.79 P* 0.79 s_src 0.25 | P raised n=3042 prec 0.39612097304405 rec 0.901
+22BoAkHoYuTe:51V-16O:7                     N=   41 X=    0 | AP_ties i 0.184 ii 0.157 iv 0.501 iv2 0.562 R 0.008 | AP i 0.184 ii 0.157 iv 0.503 iv' 0.562 R 0.009 rand 0.005 | iv B5 L29 R0 H7 | iv' k'=111 L34 R0 H2 | rule-applic 1.00 fired-neg 184
+                                           U=241 pool=7880 AUROC 1/unc 0.263 i 0.843 ii 0.802 s_src 0.774 P 0.943 P* 0.959 | rho P 0.83 P* 0.85 s_src -0.11 | P raised n=913 prec 0.2508214676889376 rec 0.950
+22RaFuFu_HOCl:1H-16O-35Cl:6                N=  147 X=    0 | AP_ties i 0.662 ii 0.661 iv 0.372 iv2 0.372 R 0.007 | AP i 0.662 ii 0.661 iv 0.691 iv' 1.000 R 0.904 rand 0.007 | iv B45 L54 R0 H48 | iv' k'=54 L54 R0 H48 | rule-applic 1.00 fired-neg 4
+23BoMiZoPo:1H3_p:8                         N=   60 X=    0 | AP_ties i 0.110 ii 0.101 iv 0.688 iv2 0.709 R 0.037 | AP i 0.118 ii 0.101 iv 0.705 iv' 0.724 R 0.037 rand 0.037 | iv B2 L44 R0 H14 | iv' k'=70 L46 R0 H12 | rule-applic 1.00 fired-neg 2
+                                           U=113 pool=1580 AUROC 1/unc 0.540 i 0.638 ii 0.627 s_src 0.696 P 0.985 P* 0.992 | rho P 0.94 P* 0.96 s_src -0.01 | P raised n=153 prec 0.7320261437908496 rec 0.991
+23BoMiZoPo:1H2-2H_p:6                      N=    2 X=    0
+                                           U=19 pool=200 AUROC 1/unc 0.650 i 0.915 ii 0.877 s_src 0.685 P 0.926 P* 0.973 | rho P 0.97 P* 0.97 s_src 0.33 | P raised n=40 prec 0.475 rec 1.000
+23BrYuTe:32S-16O:5                         N=  384 X=    4 | AP_ties i 0.349 ii 0.301 iv 0.541 iv2 0.345 R 0.008 | AP i 0.348 ii 0.301 iv 0.540 iv' 0.343 R 0.004 rand 0.008 | iv B68 L227 R0 H89 | iv' k'=149 L139 R0 H177 | rule-applic 1.00 fired-neg 182
+24AlIbFu:16O-12C-18O:7                     N=   95 X=    0 | AP_ties i 0.043 ii 0.038 iv 0.615 iv2 0.759 R 0.003 | AP i 0.043 ii 0.038 iv 0.827 iv' 0.779 R 1.000 rand 0.003 | iv B0 L68 R0 H27 | iv' k'=285 L89 R0 H6 | rule-applic 1.00 fired-neg 0
+                                           U=7936 pool=33343 AUROC 1/unc 0.535 i 0.668 ii 0.656 s_src 0.561 P 0.951 P* 0.952 | rho P 0.93 P* 0.92 s_src 0.27 | P raised n=8562 prec 0.8708245736977341 rec 0.940
+24AzAzAb:12C-18O2:7                        N=    0 X=    0
+                                           U=1361 pool=11386 AUROC 1/unc 0.658 i 0.963 ii 0.953 s_src 0.743 P 0.933 P* 0.933 | rho P 0.85 P* 0.85 s_src 0.43 | P raised n=1721 prec 0.7100522951772226 rec 0.898
+24AzAzAb:17O-12C-18O:7                     N=    0 X=    0
+                                           U=1219 pool=11174 AUROC 1/unc 0.535 i 0.963 ii 0.947 s_src 0.655 P 0.944 P* 0.944 | rho P 0.83 P* 0.83 s_src 0.39 | P raised n=1783 prec 0.6399326977005048 rec 0.936
+24AzAzAb:13C-18O2:7                        N=    0 X=    0
+                                           U=229 pool=2346 AUROC 1/unc 0.328 i 0.978 ii 0.974 s_src 0.738 P 0.981 P* 0.981 | rho P 0.94 P* 0.94 s_src 0.59 | P raised n=279 prec 0.7921146953405018 rec 0.965
+24IbAlFu_CO2636:13C-16O2:7                 N=   29 X=    0 | AP_ties i 0.631 ii 0.620 iv 0.847 iv2 0.868 R 0.036 | AP i 0.631 ii 0.620 iv 0.968 iv' 0.901 R 1.000 rand 0.001 | iv B2 L25 R0 H2 | iv' k'=87 L26 R0 H1 | rule-applic 1.00 fired-neg 0
+                                           U=6033 pool=19332 AUROC 1/unc 0.488 i 0.849 ii 0.826 s_src 0.614 P 0.932 P* 0.931 | rho P 0.93 P* 0.93 s_src 0.34 | P raised n=6788 prec 0.8239540365350618 rec 0.927
+24McPeSyBo:48Ti-16O:3                      N= 1416 X=    0 | AP_ties i 0.412 ii 0.358 iv 0.462 iv2 0.286 R 0.023 | AP i 0.412 ii 0.358 iv 0.686 iv' 0.830 R 0.933 rand 0.023 | iv B15 L799 R0 H602 | iv' k'=535 L466 R0 H935 | rule-applic 0.74 fired-neg 0
+24SeElYu_PN:31P-14N:4                      N= 1695 X= 1382 | AP_ties i 0.386 ii 0.376 iv 0.426 iv2 0.465 R 0.374 | AP i 0.386 ii 0.376 iv 0.532 iv' 0.487 R 1.000 rand 0.374 | iv B0 L825 R0 H870 | iv' k'=4306 L1394 R0 H301 | rule-applic 1.00 fired-neg 0
+                                           U=252 pool=2843 AUROC 1/unc 0.364 i 0.606 ii 0.590 s_src 0.385 P 0.592 P* 0.705 | rho P 0.02 P* 0.49 s_src -0.04 | P raised n=2554 prec 0.09436178543461238 rec 0.956
+25AzAlAb:12C-16O2:7                        N=  284 X=   65 | AP_ties i 0.031 ii 0.030 iv 0.018 iv2 0.024 R 0.014 | AP i 0.031 ii 0.030 iv 0.214 iv' 0.111 R 0.337 rand 0.006 | iv B18 L14 R5 H247 | iv' k'=1047 L54 R5 H207 | rule-applic 1.00 fired-neg 171
+                                           U=11283 pool=43980 AUROC 1/unc 0.570 i 0.880 ii 0.866 s_src 0.733 P 0.916 P* 0.926 | rho P 0.83 P* 0.85 s_src 0.41 | P raised n=13458 prec 0.7750037152622975 rec 0.924
+25AzAlTe:17O-13C-17O:7                     N=    0 X=    0
+                                           U=205 pool=1664 AUROC 1/unc 0.522 i 0.986 ii 0.944 s_src 0.640 P 0.985 P* 0.985 | rho P 0.99 P* 0.99 s_src -0.07 | P raised n=253 prec 0.8063241106719368 rec 0.995
+25AzAlTe:17O-13C-18O:7                     N=    0 X=    0
+                                           U=290 pool=1890 AUROC 1/unc 0.452 i 0.981 ii 0.922 s_src 0.602 P 0.978 P* 0.978 | rho P 0.97 P* 0.97 s_src -0.20 | P raised n=350 prec 0.8171428571428572 rec 0.986
+25AzTeYu:16O-13C-18O:7                     N=   21 X=    0 | AP_ties i 0.050 ii 0.050 iv 0.173 iv2 0.196 R 0.002 | AP i 0.050 ii 0.050 iv 0.268 iv' 0.256 R 0.098 rand 0.002 | iv B1 L7 R0 H13 | iv' k'=63 L9 R0 H11 | rule-applic 1.00 fired-neg 10
+                                           U=2513 pool=11988 AUROC 1/unc 0.526 i 0.639 ii 0.640 s_src 0.543 P 0.937 P* 0.931 | rho P 0.87 P* 0.85 s_src 0.20 | P raised n=3343 prec 0.704157941968292 rec 0.937
+25MaAzTe:16O-13C-17O:7                     N=    0 X=    0
+                                           U=810 pool=4903 AUROC 1/unc 0.549 i 0.974 ii 0.960 s_src 0.586 P 0.969 P* 0.969 | rho P 0.93 P* 0.93 s_src 0.12 | P raised n=971 prec 0.8063851699279093 rec 0.967
+25MaAzTe:12C-17O2:7                        N=   85 X=    0 | AP_ties i 0.607 ii 0.582 iv 0.464 iv2 0.464 R 0.008 | AP i 0.606 ii 0.582 iv 0.466 iv' 0.466 R 0.010 rand 0.008 | iv B27 L40 R0 H18 | iv' k'=255 L40 R0 H18 | rule-applic 1.00 fired-neg 5
+                                           U=2406 pool=10039 AUROC 1/unc 0.470 i 0.905 ii 0.870 s_src 0.656 P 0.941 P* 0.933 | rho P 0.91 P* 0.91 s_src 0.33 | P raised n=2942 prec 0.7688647178789939 rec 0.940
+25MaElAb:12C-16O:2                         N=   12 X=    0 | AP_ties i 0.743 ii 0.697 iv 0.742 iv2 0.742 R 0.001 | AP i 0.743 ii 0.697 iv 0.742 iv' 0.742 R 0.003 rand 0.001 | iv B1 L10 R0 H1 | iv' k'=36 L10 R0 H1 | rule-applic 1.00 fired-neg 0
+                                           U=3783 pool=19221 AUROC 1/unc 0.346 i 0.978 ii 0.968 s_src 0.869 P 0.974 P* 0.974 | rho P 0.96 P* 0.96 s_src 0.18 | P raised n=4425 prec 0.8354802259887005 rec 0.977
+25ObAzTe:16O-12C-17O:7                     N=  103 X=    0 | AP_ties i 0.134 ii 0.116 iv 0.794 iv2 0.856 R 0.006 | AP i 0.134 ii 0.116 iv 0.797 iv' 0.856 R 0.004 rand 0.006 | iv B3 L83 R0 H17 | iv' k'=309 L94 R0 H6 | rule-applic 1.00 fired-neg 0
+                                           U=3242 pool=15973 AUROC 1/unc 0.597 i 0.803 ii 0.783 s_src 0.667 P 0.934 P* 0.933 | rho P 0.88 P* 0.88 s_src 0.36 | P raised n=4301 prec 0.709834922111137 rec 0.942
+26GrDaPo:13C-16O:2                         N=   15 X=    0 | AP_ties i 0.317 ii 0.312 iv 1.000 iv2 1.000 R 0.004 | AP i 0.317 ii 0.312 iv 1.000 iv' 1.000 R 0.003 rand 0.004 | iv B0 L15 R0 H0 | iv' k'=32 L15 R0 H0 | rule-applic 1.00 fired-neg 0
+24TeFuYu:14N2-16O:5                        N=  632 X=    2 | AP_ties i 0.282 ii 0.257 iv 0.437 iv2 0.572 R 0.009 | AP i 0.282 ii 0.257 iv 0.713 iv' 0.606 R 0.969 rand 0.009 | iv B29 L349 R0 H254 | iv' k'=1902 L553 R0 H50 | rule-applic 1.00 fired-neg 4
+                                           U=15615 pool=66738 AUROC 1/unc 0.545 i 0.933 ii 0.923 s_src 0.717 P 0.956 P* 0.956 | rho P 0.88 P* 0.89 s_src 0.22 | P raised n=18606 prec 0.8017843706331291 rec 0.955
+MARVEL_network@0b56238:12C2H4:15           N=  625 X=   54 | AP_ties i 0.068 ii 0.066 iv 0.433 iv2 0.441 R 0.017 | AP i 0.068 ii 0.066 iv 0.440 iv' 0.443 R 0.016 rand 0.012 | iv B52 L299 R105 H169 | iv' k'=2037 L315 R101 H157 | rule-applic 1.00 fired-neg 5241
+                                           U=827 pool=35053 AUROC 1/unc 0.739 i 0.703 ii 0.713 s_src 0.733 P 0.870 P* 0.887 | rho P 0.31 P* 0.42 s_src -0.05 | P raised n=6870 prec 0.10160116448326055 rec 0.844
+
+POOLED (molecule-weighted; 95% cluster bootstrap over groups)
+partition_iv.B            0.066 [0.028, 0.117] by group {"AlO": 0.0, "C2H4": 0.083, "CN": 0.005, "CO": 0.042, "CO2": 0.088, "CaOH": 0.0, "H3+": 0.033, "HOCl": 0.306, "N2O": 0.046, "PN": 0.0, "SO": 0.177, "TiO": 0.011, "VO": 0.061}
+partition_iv.L            0.655 [0.559, 0.758] by group {"AlO": 0.873, "C2H4": 0.478, "CN": 0.749, "CO": 0.917, "CO2": 0.539, "CaOH": 1.0, "H3+": 0.733, "HOCl": 0.367, "N2O": 0.552, "PN": 0.487, "SO": 0.591, "TiO": 0.564, "VO": 0.659}
+partition_iv.R            0.014 [0.000, 0.040] by group {"AlO": 0.0, "C2H4": 0.168, "CN": 0.0, "CO": 0.0, "CO2": 0.003, "CaOH": 0.0, "H3+": 0.0, "HOCl": 0.0, "N2O": 0.0, "PN": 0.0, "SO": 0.0, "TiO": 0.0, "VO": 0.009}
+partition_iv.H            0.266 [0.188, 0.337] by group {"AlO": 0.127, "C2H4": 0.27, "CN": 0.246, "CO": 0.042, "CO2": 0.37, "CaOH": 0.0, "H3+": 0.233, "HOCl": 0.327, "N2O": 0.402, "PN": 0.513, "SO": 0.232, "TiO": 0.425, "VO": 0.271}
+partition_iv_unweighted_lines {"B": 0.03637101135749054, "L": 0.5926176311519741, "R": 0.015008112493239589, "H": 0.35600324499729585}
+partition_iv2.B            0.066 [0.028, 0.117] by group {"AlO": 0.0, "C2H4": 0.083, "CN": 0.005, "CO": 0.042, "CO2": 0.088, "CaOH": 0.0, "H3+": 0.033, "HOCl": 0.306, "N2O": 0.046, "PN": 0.0, "SO": 0.177, "TiO": 0.011, "VO": 0.061}
+partition_iv2.L            0.643 [0.513, 0.764] by group {"AlO": 0.4, "C2H4": 0.504, "CN": 0.552, "CO": 0.917, "CO2": 0.639, "CaOH": 0.938, "H3+": 0.767, "HOCl": 0.367, "N2O": 0.875, "PN": 0.822, "SO": 0.362, "TiO": 0.329, "VO": 0.887}
+partition_iv2.R            0.014 [0.000, 0.039] by group {"AlO": 0.004, "C2H4": 0.162, "CN": 0.0, "CO": 0.0, "CO2": 0.003, "CaOH": 0.0, "H3+": 0.0, "HOCl": 0.0, "N2O": 0.0, "PN": 0.0, "SO": 0.0, "TiO": 0.0, "VO": 0.009}
+partition_iv2.H            0.278 [0.174, 0.390] by group {"AlO": 0.596, "C2H4": 0.251, "CN": 0.443, "CO": 0.042, "CO2": 0.27, "CaOH": 0.062, "H3+": 0.2, "HOCl": 0.327, "N2O": 0.079, "PN": 0.178, "SO": 0.461, "TiO": 0.66, "VO": 0.043}
+partition_iv2_unweighted_lines {"B": 0.03637101135749054, "L": 0.5548945375878853, "R": 0.015278528934559221, "H": 0.3934559221200649}
+AP_i_resid                   0.408 [0.300, 0.529] (13 groups)
+AP_ties_i_resid              0.407 [0.299, 0.529] (13 groups)
+recall@K_ties_i_resid        0.435 [0.332, 0.548] (13 groups)
+AP_ii_stud                   0.356 [0.267, 0.448] (13 groups)
+AP_ties_ii_stud              0.356 [0.267, 0.448] (13 groups)
+recall@K_ties_ii_stud        0.392 [0.306, 0.483] (13 groups)
+AP_iv_loop                   0.679 [0.589, 0.762] (13 groups)
+AP_ties_iv_loop              0.595 [0.496, 0.707] (13 groups)
+recall@K_ties_iv_loop        0.654 [0.558, 0.757] (13 groups)
+AP_iv2_loop                  0.651 [0.549, 0.751] (13 groups)
+AP_ties_iv2_loop             0.544 [0.446, 0.645] (13 groups)
+recall@K_ties_iv2_loop       0.565 [0.466, 0.670] (13 groups)
+AP_R_rules                   0.338 [0.120, 0.562] (13 groups)
+AP_ties_R_rules              0.044 [0.010, 0.099] (13 groups)
+recall@K_ties_R_rules        0.044 [0.011, 0.101] (13 groups)
+AP_random                    0.043 [0.008, 0.098] (13 groups)
+AUROC_inv_unc                0.496 [0.408, 0.602] (7 groups)
+rho_inv_unc                  0.105 [-0.000, 0.209] (7 groups)
+AUROC_i_resid                0.819 [0.726, 0.901] (7 groups)
+rho_i_resid                  0.541 [0.301, 0.740] (7 groups)
+AUROC_ii_stud                0.804 [0.712, 0.886] (7 groups)
+rho_ii_stud                  0.557 [0.321, 0.750] (7 groups)
+AUROC_s_src                  0.672 [0.566, 0.755] (7 groups)
+rho_s_src                    0.116 [0.034, 0.198] (7 groups)
+AUROC_P                      0.887 [0.783, 0.952] (7 groups)
+rho_P                        0.691 [0.423, 0.913] (7 groups)
+AUROC_Pstar                  0.911 [0.836, 0.961] (7 groups)
+rho_Pstar                    0.780 [0.612, 0.917] (7 groups)
+verdict                      {"iv": "judgement call", "iv_groups_H>=0.25": 7, "iv2": "judgement call", "iv2_groups_H>=0.25": 7}
