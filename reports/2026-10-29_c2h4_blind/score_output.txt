@@ -1,0 +1,305 @@
+key: negate 550, set_unc 827, scale 5, assume_unc 6, exclude ['10UlOnBePe', '58AlPl']
+excluded sources absent from unedited inputs (row fits no set, not scored): ['10UlOnBePe']
+N 550 (in ground comp 544), S 91 (91), X 54 (54), negatives 49615
+negate targets not found in unedited lines: 0
+
+== OUTLIER (unedited graph) ==
+PRIMARY: N pooled
+  N pooled: 544 positives in pool of 50159 (random AP expect 0.0108)
+    gnn_outlier_logit  AP 0.050  recall@k 0.040  top1% 0.037
+    resid_over_unc     AP 0.054  recall@k 0.048  top1% 0.042
+    studentized        AP 0.052  recall@k 0.044  top1% 0.042
+    iterative          AP 0.425  recall@k 0.467  top1% 0.465
+    random             AP 0.011  recall@k 0.011  top1% 0.011
+    h>=0.99 positives 45: recall@k gnn_outlier_logit 0.00  resid_over_unc 0.00  studentized 0.00  iterative 0.00  random 0.02
+    95% CI gnn_outlier_logit                        [+0.041, +0.060]
+    95% CI resid_over_unc                           [+0.044, +0.066]
+    95% CI studentized                              [+0.042, +0.064]
+    95% CI iterative                                [+0.381, +0.478]
+    95% CI random                                   [+0.010, +0.012]
+    95% CI gnn_outlier_logit-resid_over_unc         [-0.007, -0.002]
+    95% CI gnn_outlier_logit-studentized            [-0.005, -0.001]
+    95% CI gnn_outlier_logit-iterative              [-0.426, -0.334]
+    best baseline on full pool: iterative
+  N QAB: 75 positives in pool of 49690 (random AP expect 0.0015)
+    gnn_outlier_logit  AP 0.010  recall@k 0.013  top1% 0.040
+    resid_over_unc     AP 0.012  recall@k 0.040  top1% 0.040
+    studentized        AP 0.010  recall@k 0.027  top1% 0.040
+    iterative          AP 0.018  recall@k 0.053  top1% 0.080
+    random             AP 0.002  recall@k 0.000  top1% 0.027
+  N QAC: 350 positives in pool of 49965 (random AP expect 0.0070)
+    gnn_outlier_logit  AP 0.045  recall@k 0.037  top1% 0.046
+    resid_over_unc     AP 0.050  recall@k 0.040  top1% 0.054
+    studentized        AP 0.049  recall@k 0.037  top1% 0.054
+    iterative          AP 0.518  recall@k 0.577  top1% 0.583
+    random             AP 0.007  recall@k 0.006  top1% 0.006
+    h>=0.99 positives 8: recall@k gnn_outlier_logit 0.00  resid_over_unc 0.00  studentized 0.00  iterative 0.00  random 0.00
+  N QAI/QAM: 59 positives in pool of 49674 (random AP expect 0.0012)
+    gnn_outlier_logit  AP 0.001  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.001  recall@k 0.000  top1% 0.000
+    studentized        AP 0.001  recall@k 0.000  top1% 0.000
+    iterative          AP 0.006  recall@k 0.034  top1% 0.034
+    random             AP 0.002  recall@k 0.000  top1% 0.034
+    h>=0.99 positives 37: recall@k gnn_outlier_logit 0.00  resid_over_unc 0.00  studentized 0.00  iterative 0.00  random 0.00
+  N QAJ: 63 positives in pool of 49678 (random AP expect 0.0013)
+    gnn_outlier_logit  AP 0.003  recall@k 0.000  top1% 0.016
+    resid_over_unc     AP 0.004  recall@k 0.000  top1% 0.016
+    studentized        AP 0.004  recall@k 0.000  top1% 0.016
+    iterative          AP 0.249  recall@k 0.460  top1% 0.651
+    random             AP 0.001  recall@k 0.000  top1% 0.016
+  N QAU: 5 positives in pool of 49620 (random AP expect 0.0001)
+    gnn_outlier_logit  AP 0.000  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.001  recall@k 0.000  top1% 0.000
+    studentized        AP 0.001  recall@k 0.000  top1% 0.000
+    iterative          AP 0.181  recall@k 0.000  top1% 1.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  negate rows with no pre-registered category: 0
+S pooled
+  S pooled: 91 positives in pool of 49706 (random AP expect 0.0018)
+    gnn_outlier_logit  AP 0.021  recall@k 0.055  top1% 0.099
+    resid_over_unc     AP 0.023  recall@k 0.055  top1% 0.132
+    studentized        AP 0.022  recall@k 0.066  top1% 0.121
+    iterative          AP 0.279  recall@k 0.407  top1% 0.484
+    random             AP 0.002  recall@k 0.000  top1% 0.000
+    h>=0.99 positives 7: recall@k gnn_outlier_logit 0.14  resid_over_unc 0.00  studentized 0.14  iterative 0.00  random 0.00
+    95% CI gnn_outlier_logit                        [+0.011, +0.040]
+    95% CI resid_over_unc                           [+0.013, +0.048]
+    95% CI studentized                              [+0.012, +0.043]
+    95% CI iterative                                [+0.174, +0.391]
+    95% CI random                                   [+0.002, +0.003]
+    95% CI gnn_outlier_logit-resid_over_unc         [-0.011, +0.001]
+    95% CI gnn_outlier_logit-studentized            [-0.007, +0.001]
+    95% CI gnn_outlier_logit-iterative              [-0.365, -0.157]
+    best baseline on full pool: iterative
+  S 02MoKoBuHe: 5 positives in pool of 49620 (random AP expect 0.0001)
+    gnn_outlier_logit  AP 0.005  recall@k 0.000  top1% 0.200
+    resid_over_unc     AP 0.001  recall@k 0.000  top1% 0.200
+    studentized        AP 0.008  recall@k 0.000  top1% 0.200
+    iterative          AP 0.037  recall@k 0.000  top1% 1.000
+    random             AP 0.001  recall@k 0.000  top1% 0.000
+    h>=0.99 positives 2: recall@k gnn_outlier_logit 0.00  resid_over_unc 0.00  studentized 0.00  iterative 0.00  random 0.00
+  S 04BeCaDiDo: 12 positives in pool of 49627 (random AP expect 0.0002)
+    gnn_outlier_logit  AP 0.001  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.001  recall@k 0.000  top1% 0.000
+    studentized        AP 0.001  recall@k 0.000  top1% 0.000
+    iterative          AP 0.121  recall@k 0.167  top1% 0.667
+    random             AP 0.001  recall@k 0.000  top1% 0.000
+    h>=0.99 positives 4: recall@k gnn_outlier_logit 0.00  resid_over_unc 0.00  studentized 0.00  iterative 0.00  random 0.00
+  S 13LeTa: 2 positives in pool of 49617 (random AP expect 0.0000)
+    gnn_outlier_logit  AP 0.003  recall@k 0.000  top1% 1.000
+    resid_over_unc     AP 0.004  recall@k 0.000  top1% 1.000
+    studentized        AP 0.003  recall@k 0.000  top1% 1.000
+    iterative          AP 0.000  recall@k 0.000  top1% 0.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  S 13UlGrAsHo: 1 positives in pool of 49616 (random AP expect 0.0000)
+    gnn_outlier_logit  AP 0.000  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.000  recall@k 0.000  top1% 0.000
+    studentized        AP 0.000  recall@k 0.000  top1% 0.000
+    iterative          AP 0.000  recall@k 0.000  top1% 0.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  S 18AsRa: 2 positives in pool of 49617 (random AP expect 0.0000)
+    gnn_outlier_logit  AP 0.146  recall@k 0.000  top1% 1.000
+    resid_over_unc     AP 0.208  recall@k 0.000  top1% 1.000
+    studentized        AP 0.155  recall@k 0.000  top1% 1.000
+    iterative          AP 0.417  recall@k 0.000  top1% 1.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  S 19HaGaArLa: 1 positives in pool of 49616 (random AP expect 0.0000)
+    gnn_outlier_logit  AP 0.000  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.000  recall@k 0.000  top1% 0.000
+    studentized        AP 0.000  recall@k 0.000  top1% 0.000
+    iterative          AP 0.000  recall@k 0.000  top1% 0.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+    h>=0.99 positives 1: recall@k gnn_outlier_logit 0.00  resid_over_unc 0.00  studentized 0.00  iterative 0.00  random 0.00
+  S 19UlBeGrRa: 2 positives in pool of 49617 (random AP expect 0.0000)
+    gnn_outlier_logit  AP 0.000  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.000  recall@k 0.000  top1% 0.000
+    studentized        AP 0.000  recall@k 0.000  top1% 0.000
+    iterative          AP 0.033  recall@k 0.000  top1% 0.500
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  S 24BeVaTuBo: 25 positives in pool of 49640 (random AP expect 0.0005)
+    gnn_outlier_logit  AP 0.007  recall@k 0.000  top1% 0.080
+    resid_over_unc     AP 0.007  recall@k 0.000  top1% 0.200
+    studentized        AP 0.007  recall@k 0.000  top1% 0.120
+    iterative          AP 0.458  recall@k 0.720  top1% 0.840
+    random             AP 0.001  recall@k 0.000  top1% 0.000
+  S 58AlPl: 10 positives in pool of 49625 (random AP expect 0.0002)
+    gnn_outlier_logit  AP 0.000  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.000  recall@k 0.000  top1% 0.000
+    studentized        AP 0.000  recall@k 0.000  top1% 0.000
+    iterative          AP 0.004  recall@k 0.000  top1% 0.300
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  S 59DoSt: 1 positives in pool of 49616 (random AP expect 0.0000)
+    gnn_outlier_logit  AP 0.000  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.000  recall@k 0.000  top1% 0.000
+    studentized        AP 0.000  recall@k 0.000  top1% 0.000
+    iterative          AP 0.014  recall@k 0.000  top1% 1.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  S 76VaFa: 3 positives in pool of 49618 (random AP expect 0.0001)
+    gnn_outlier_logit  AP 0.000  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.000  recall@k 0.000  top1% 0.000
+    studentized        AP 0.000  recall@k 0.000  top1% 0.000
+    iterative          AP 0.000  recall@k 0.000  top1% 0.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  S 79HeLyLeLa: 2 positives in pool of 49617 (random AP expect 0.0000)
+    gnn_outlier_logit  AP 0.028  recall@k 0.000  top1% 0.500
+    resid_over_unc     AP 0.046  recall@k 0.000  top1% 0.500
+    studentized        AP 0.036  recall@k 0.000  top1% 0.500
+    iterative          AP 0.258  recall@k 0.000  top1% 1.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  S 83DaPiFaDe: 3 positives in pool of 49618 (random AP expect 0.0001)
+    gnn_outlier_logit  AP 0.007  recall@k 0.000  top1% 0.333
+    resid_over_unc     AP 0.006  recall@k 0.000  top1% 0.333
+    studentized        AP 0.006  recall@k 0.000  top1% 0.333
+    iterative          AP 0.000  recall@k 0.000  top1% 0.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  S 88ThCoDeCo: 1 positives in pool of 49616 (random AP expect 0.0000)
+    gnn_outlier_logit  AP 0.011  recall@k 0.000  top1% 1.000
+    resid_over_unc     AP 0.019  recall@k 0.000  top1% 1.000
+    studentized        AP 0.016  recall@k 0.000  top1% 1.000
+    iterative          AP 0.167  recall@k 0.000  top1% 1.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  S 94OoOuReFa: 1 positives in pool of 49616 (random AP expect 0.0000)
+    gnn_outlier_logit  AP 0.000  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.000  recall@k 0.000  top1% 0.000
+    studentized        AP 0.000  recall@k 0.000  top1% 0.000
+    iterative          AP 0.004  recall@k 0.000  top1% 1.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  S 95LeAzHeFa: 1 positives in pool of 49616 (random AP expect 0.0000)
+    gnn_outlier_logit  AP 0.000  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.000  recall@k 0.000  top1% 0.000
+    studentized        AP 0.000  recall@k 0.000  top1% 0.000
+    iterative          AP 0.045  recall@k 0.000  top1% 1.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  S 97SaOoReFa: 18 positives in pool of 49633 (random AP expect 0.0004)
+    gnn_outlier_logit  AP 0.007  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.008  recall@k 0.000  top1% 0.000
+    studentized        AP 0.007  recall@k 0.000  top1% 0.000
+    iterative          AP 0.000  recall@k 0.000  top1% 0.000
+    random             AP 0.001  recall@k 0.000  top1% 0.000
+  S 99BaGeHePe: 1 positives in pool of 49616 (random AP expect 0.0000)
+    gnn_outlier_logit  AP 0.001  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.001  recall@k 0.000  top1% 0.000
+    studentized        AP 0.001  recall@k 0.000  top1% 0.000
+    iterative          AP 0.000  recall@k 0.000  top1% 0.000
+    random             AP 0.000  recall@k 0.000  top1% 0.000
+  X (excluded sources): 54 positives in pool of 49669 (random AP expect 0.0011)
+    gnn_outlier_logit  AP 0.001  recall@k 0.000  top1% 0.000
+    resid_over_unc     AP 0.001  recall@k 0.000  top1% 0.000
+    studentized        AP 0.001  recall@k 0.000  top1% 0.000
+    iterative          AP 0.001  recall@k 0.000  top1% 0.056
+    random             AP 0.001  recall@k 0.000  top1% 0.019
+
+== UNCERTAINTY (unedited graph) ==
+(a) line-level: 827 set_unc positives, 36723 negatives (set_unc rows outside eligible lines: 0)
+  PRIMARY AUROC (gnn_sigma_over_unc) and baselines:
+    gnn_sigma_over_unc   AUROC 0.739  95% CI [0.728, 0.750]
+    gnn_line_sigma       AUROC 0.337  95% CI [0.320, 0.354]
+    resid_over_unc       AUROC 0.700  95% CI [0.683, 0.717]
+    studentized          AUROC 0.711  95% CI [0.694, 0.726]
+    random               AUROC 0.507  95% CI [0.487, 0.525]
+    diff gnn_sigma_over_unc-resid_over_unc        [+0.020, +0.057]
+    diff gnn_sigma_over_unc-studentized           [+0.011, +0.047]
+  Spearman vs applied factor among positives: gnn_sigma_over_unc -0.096  gnn_line_sigma +0.026  resid_over_unc +0.144  studentized +0.184  random -0.009
+    QAS a' (rule)    n=500  gnn_sigma_over_unc 0.765  gnn_line_sigma 0.323  resid_over_unc 0.752  studentized 0.750  random 0.505
+    QAS 08RoBoVa     n= 33  gnn_sigma_over_unc 0.958  gnn_line_sigma 0.346  resid_over_unc 0.849  studentized 0.864  random 0.542
+    QAR              n=286  gnn_sigma_over_unc 0.669  gnn_line_sigma 0.354  resid_over_unc 0.588  studentized 0.620  random 0.504
+    QAU              n= 17  gnn_sigma_over_unc 0.710  gnn_line_sigma 0.481  resid_over_unc 0.877  studentized 0.879  random 0.599
+    set_unc rows with no pre-registered category: 0
+  factor vs key: set_unc rows with factor ~1: 0; factor != 1 without set_unc/scale/assume: 0; scaled-source lines whose factor != scale: 0
+(b) source-level (eligible lines):
+    00BlWaBo     -      factor       1  median gnn_sigma/unc 2.13  median resid/unc 0.508  n=25
+    02MoKoBuHe   scale  factor       3  median gnn_sigma/unc 21.3  median resid/unc 9.08  n=116
+    03BlBoWaLe   -      factor       1  median gnn_sigma/unc 2.13  median resid/unc 0.717  n=17
+    04BeCaDiDo   -      factor       1  median gnn_sigma/unc 0.545  median resid/unc 0  n=877
+    04PaLiOr     -      factor       1  median gnn_sigma/unc 1.08  median resid/unc 3.04  n=7
+    06WiDeMaMa   -      factor       1  median gnn_sigma/unc 360  median resid/unc 2.25e-08  n=80
+    08RoBoVa     -      factor       1  median gnn_sigma/unc 18.4  median resid/unc 4.99  n=1346
+    10LoBoLoRo   assume factor       2  median gnn_sigma/unc 2.12  median resid/unc 10.7  n=713
+    13BaCiLoBo   -      factor       1  median gnn_sigma/unc 1.08  median resid/unc 0.0705  n=370
+    13LeTa       -      factor       1  median gnn_sigma/unc 1.77  median resid/unc 1.22  n=624
+    13LeTab      -      factor       1  median gnn_sigma/unc 1.79  median resid/unc 7.58  n=94
+    13LeTac      -      factor       1  median gnn_sigma/unc 1.81  median resid/unc 0.824  n=524
+    13LeTad      -      factor       1  median gnn_sigma/unc 1.8  median resid/unc 0.345  n=114
+    13UlGrAsHo   -      factor       1  median gnn_sigma/unc 1.08  median resid/unc 0.565  n=13616
+    14UlGrBeOn   -      factor       1  median gnn_sigma/unc 1.06  median resid/unc 0.505  n=1296
+    15UlGrBeKa   -      factor       1  median gnn_sigma/unc 5.38  median resid/unc 1.52  n=1568
+    16AlBoRoBo   -      factor       1  median gnn_sigma/unc 10.7  median resid/unc 4.17  n=9777
+    18AsRa       assume factor     0.2  median gnn_sigma/unc 1.06  median resid/unc 2.39  n=31
+    19Chapovsk   -      factor       1  median gnn_sigma/unc 1.07  median resid/unc 2.87  n=5
+    19HaGaArLa   -      factor       1  median gnn_sigma/unc 5.18  median resid/unc 2.17e-09  n=516
+    19UlBeGrRa   scale  factor       2  median gnn_sigma/unc 21.3  median resid/unc 4.87  n=3354
+    23MrMaReAr   assume factor     0.5  median gnn_sigma/unc 1.08  median resid/unc 3.9  n=260
+    24BeBeReMa   assume factor     0.7  median gnn_sigma/unc 1.07  median resid/unc 1.84  n=1983
+    24BeReCa     -      factor       1  median gnn_sigma/unc 1.07  median resid/unc 1.93  n=1028
+    24BeVaTuBo   scale  factor       2  median gnn_sigma/unc 5.31  median resid/unc 3.1  n=2938
+    24PeLeSuRu   assume factor    0.26  median gnn_sigma/unc 0.217  median resid/unc 3.87  n=260
+    25BeBeReCa   scale  factor       2  median gnn_sigma/unc 5.35  median resid/unc 3.97  n=6020
+    26HjSiCaSi   -      factor       1  median gnn_sigma/unc 144  median resid/unc 0.00644  n=16
+    26PeLeSuRu   assume factor       1  median gnn_sigma/unc 0.837  median resid/unc 3.99  n=1030
+    59DoSt       -      factor       1  median gnn_sigma/unc 0.0371  median resid/unc 0.425  n=11
+    75HiJe       -      factor       1  median gnn_sigma/unc 0.0745  median resid/unc 0.767  n=35
+    76VaFa       -      factor       1  median gnn_sigma/unc 0.108  median resid/unc 0.389  n=203
+    79HeLyLeLa   -      factor       1  median gnn_sigma/unc 2.16  median resid/unc 1.19  n=9
+    82HeLyLeLa   -      factor       1  median gnn_sigma/unc 90.3  median resid/unc 2.56  n=10
+    83DaPiFaDe   scale  factor       5  median gnn_sigma/unc 10.6  median resid/unc 18.2  n=150
+    88ThCoDeCo   -      factor       1  median gnn_sigma/unc 6.46  median resid/unc 2.01  n=17
+    90DaEnRe     -      factor       1  median gnn_sigma/unc 1.08  median resid/unc 1.54  n=125
+    94OoOuReFa   -      factor       1  median gnn_sigma/unc 1.06  median resid/unc 1.26  n=126
+    95LeAzHeFa   -      factor       1  median gnn_sigma/unc 214  median resid/unc 1.21  n=52
+    96OoReMeKl   -      factor       1  median gnn_sigma/unc 37.2  median resid/unc 1.52e-08  n=5
+    97BlJeEwDa   -      factor       1  median gnn_sigma/unc 53.3  median resid/unc 1.99  n=13
+    97SaOoReFa   -      factor       1  median gnn_sigma/unc 1.81  median resid/unc 4.88  n=42
+    98RuFiKhHe   -      factor       1  median gnn_sigma/unc 1.5e+03  median resid/unc 0.567  n=202
+    99BaGeHePe   -      factor       1  median gnn_sigma/unc 1.14  median resid/unc 0  n=7
+    Magic        -      factor       1  median gnn_sigma/unc 1.16e+03  median resid/unc 198  n=3
+  Spearman over 5 scaled sources (factor vs median gnn_sigma/unc): +0.447
+
+== UNCERTAINTY (edited graph vs states.txt) ==
+  levels 11579: Spearman(gnn sigma, states unc) +0.500
+    validated n=9420: +0.539
+    tree      n=2159: +0.150
+  median log10(gnn/states) -0.16
+  top 20 GNN >> states:
+    0 0 0 0 0 0 0 0 0 0 0 0 1 0 1            gnn 8.38e-04 states 1.00e-06 deg 102 validated
+    0 0 0 0 0 0 0 0 0 0 0 0 1 1 0            gnn 8.27e-04 states 1.00e-06 deg 99 validated
+    0 0 0 0 0 0 0 0 0 0 0 0 1 1 1            gnn 8.26e-04 states 1.00e-06 deg 109 validated
+    0 0 0 0 0 0 0 0 0 0 0 1 0 0 0            gnn 7.65e-04 states 8.60e-05 deg 4 validated
+    0 0 0 0 0 0 0 0 0 0 0 1 2 0 2            gnn 7.39e-04 states 9.24e-05 deg 6 validated
+    0 0 0 0 0 0 1 0 0 0 0 0 0 0 0            gnn 7.83e-04 states 1.00e-04 deg 1 tree
+    0 0 0 0 0 0 0 0 0 1 0 0 1 1 1            gnn 7.76e-04 states 1.10e-04 deg 23 validated
+    0 0 0 0 0 0 1 0 0 0 0 0 1 1 1            gnn 7.72e-04 states 1.19e-04 deg 8 validated
+    0 0 0 0 0 0 0 0 0 0 0 1 1 1 1            gnn 7.34e-04 states 1.16e-04 deg 4 validated
+    0 0 0 0 0 0 1 0 0 0 0 0 1 0 1            gnn 7.41e-04 states 1.20e-04 deg 6 validated
+    0 0 0 0 0 0 1 0 0 0 0 0 2 1 1            gnn 7.14e-04 states 1.19e-04 deg 16 validated
+    0 0 0 0 0 0 0 0 0 0 0 1 1 0 1            gnn 7.25e-04 states 1.25e-04 deg 6 validated
+    0 0 0 0 0 0 0 0 0 1 0 0 1 1 0            gnn 8.01e-04 states 1.47e-04 deg 20 validated
+    0 0 0 0 0 0 0 0 0 0 0 0 3 0 3            gnn 8.30e-04 states 1.54e-04 deg 135 validated
+    0 0 0 0 0 0 0 0 0 1 0 0 2 2 0            gnn 7.72e-04 states 1.47e-04 deg 14 validated
+    0 0 0 0 0 0 0 0 0 0 0 1 2 1 2            gnn 7.18e-04 states 1.40e-04 deg 6 validated
+    0 0 0 0 0 0 1 0 0 0 0 0 2 0 2            gnn 7.18e-04 states 1.45e-04 deg 6 validated
+    0 0 0 0 0 0 0 0 0 0 0 0 2 2 1            gnn 8.29e-04 states 1.69e-04 deg 93 validated
+    0 0 0 0 0 0 0 0 0 0 0 1 2 1 1            gnn 7.19e-04 states 1.50e-04 deg 6 validated
+    0 0 0 0 0 0 0 0 0 0 0 0 3 2 1            gnn 8.26e-04 states 1.75e-04 deg 145 validated
+  top 20 GNN << states:
+    0 0 0 0 0 0 1 1 0 0 0 0 14 7 7           gnn 7.22e-04 states 2.00e-02 deg 2 validated
+    0 0 0 0 0 0 1 1 0 0 0 0 12 5 7           gnn 7.35e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 18 7 11          gnn 7.38e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 15 8 7           gnn 7.38e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 5 3 2            gnn 7.40e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 11 6 5           gnn 7.40e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 15 7 8           gnn 7.41e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 25 4 21          gnn 7.42e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 19 8 11          gnn 7.43e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 5 4 1            gnn 7.47e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 12 6 6           gnn 7.50e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 22 6 16          gnn 7.51e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 23 8 15          gnn 7.52e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 24 7 17          gnn 7.64e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 20 6 14          gnn 7.70e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 6 6 0            gnn 7.76e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 6 4 2            gnn 7.81e-04 states 2.00e-02 deg 1 tree
+    0 0 0 0 0 0 1 1 0 0 0 0 19 4 15          gnn 7.22e-04 states 1.00e-02 deg 2 validated
+    0 0 0 0 0 0 1 1 0 0 0 0 11 2 9           gnn 7.22e-04 states 1.00e-02 deg 2 validated
+    0 0 0 0 0 0 1 1 0 0 0 0 12 2 11          gnn 7.24e-04 states 1.00e-02 deg 2 validated
+
+advisory: top 50 edited-graph lines -> advisory_top50_edited.tsv

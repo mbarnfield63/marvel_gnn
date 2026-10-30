@@ -25,7 +25,10 @@ from marvel_gnn.core.solver import level_index, solve_energies
 
 ERROR_SCALE = 1e6  # errors/sigmas are handled in 1e-6 cm-1 units
 
-MAX_QN = 7   # QN slots; longest in-scope schema is 7 (CO2 CDSD)
+MAX_QN = 15  # QN slots; longest in-scope schema is 15 (C2H4: v1..v12 J Ka Kc)
+# Zero the QN block and hold the token-count column constant, so the heads see
+# structure only: a CO-trained model has never seen another schema's labels.
+QN_MASK = True
 NODE_DIM = MAX_QN + 6
 EDGE_DIM = 5
 
@@ -116,6 +119,9 @@ def build_graph(transitions):
 
     qn = qn_array(list(idx)) / 50.0  # x cols 0..MAX_QN-1 (heads slice these)
     nqn = len(next(iter(idx)).split())
+    if QN_MASK:
+        qn[:] = 0.0
+        nqn = MAX_QN
 
     e_arr = np.array([energies[a] for a in idx])
     incident = [[] for _ in range(n)]

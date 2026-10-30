@@ -9,6 +9,7 @@ import torch
 
 from marvel_gnn.core.parse import Transition
 from marvel_gnn.gnn.corrupt import QN_BUMP, corrupt
+import marvel_gnn.gnn.data as gdata
 from marvel_gnn.gnn.data import MAX_QN, NODE_DIM, build_graph, qn_array
 from marvel_gnn.gnn.labelfix import fix_sample
 from marvel_gnn.gnn.model import MarvelGNN
@@ -32,12 +33,15 @@ def cdsd_ladder(n=10):
 def test_qn_array_pads_and_maps_parity():
     q = qn_array(["3 0 1 1 0 2 f", "0 1"])
     assert q.shape == (2, MAX_QN)
-    assert q[0].tolist() == [3, 0, 1, 1, 0, 2, 1]
-    assert q[1].tolist() == [0, 1, 0, 0, 0, 0, 0]
+    assert q[0].tolist() == [3, 0, 1, 1, 0, 2, 1] + [0] * (MAX_QN - 7)
+    assert q[1].tolist() == [0, 1] + [0] * (MAX_QN - 2)
 
 
-def test_build_graph_and_heads_on_7_token_schema():
+def test_build_graph_and_heads_on_7_token_schema(monkeypatch):
     ts = cdsd_ladder()
+    masked, _ = build_graph(ts)
+    assert (masked.x[:, :MAX_QN] == 0).all()  # QN_MASK: structure only
+    monkeypatch.setattr(gdata, "QN_MASK", False)
     graph, idx = build_graph(ts)
     assert graph.x.shape == (len(idx), NODE_DIM)
     assert torch.isfinite(graph.x).all()

@@ -1,0 +1,6 @@
+unedited level sigma cm-1: min 6.85e-04 p5 7.04e-04 median 7.51e-04 p95 8.41e-04 max 8.77e-04
+edited level sigma cm-1: min 6.86e-04 p5 7.03e-04 median 7.52e-04 p95 8.41e-04 max 8.76e-04
+POST HOC AUROC set_unc: 1/unc alone 0.755 ; gnn_sigma_over_unc 0.739 ; spearman(gnn_sigma_over_unc, 1/unc) over pool 0.925
+  95% CI gnn_sigma_over_unc - 1/unc (np.float64(-0.018760067870630972), np.float64(-0.013361009732776824))
+POST HOC spearman(gnn logit, resid/unc) on main: 0.776
+POST HOC edited Spearman with states unc: gnn 0.500 ; min incident line unc 0.518 ; 1/degree 0.359
