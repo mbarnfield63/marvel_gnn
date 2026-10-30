@@ -1,10 +1,18 @@
 # MARVEL_GNN
 
+> **CLOSED (2026-10-30).** This project is closed. What didn't work, and why, is in
+> [`reports/FAILED_EXPERIMENTS.md`](reports/FAILED_EXPERIMENTS.md); read it before rerunning anything. No GNN
+> head gave a usable gain over simple deterministic rules. Three tie or lose to a one-line rule on CO; the
+> uncertainty head's CO edge (1.3–1.8× in NLL) collapsed on C2H4 (below 1/unc). The useful outcome, greedy |r|/u
+> triage at k = 3, now lives in MARVEL_network (`pyfit.py` greedy mode). Reopen only if a new input source
+> exists for the residual-invisible curator negations (about 43% of the headroom), or if a sound exact
+> solver is wanted to settle greedy's optimality on VO-like networks.
+
 Python port of MARVEL (Furtenbacher, Császár & Tennyson, *J. Mol. Spectrosc.* 245, 2007; Furtenbacher & Császár, *JQSRT* 113, 2012), extended with a graph neural network targeting four specific weaknesses of the original method: uncertainty calibration, outlier detection, orphan-node linkage, and quantum-number label correction.
 
 MARVEL inverts measured rotational-vibrational transitions into empirical energy levels with well-defined uncertainties, via a spectroscopic network (energy levels as nodes, transitions as edges). This repo faithfully ports that core algorithm, then adds a shared-encoder multi-task GNN on top.
 
-## Status
+## Status (historical, superseded by the CLOSED note above)
 
 Core port and all four GNN heads are built and validated on real published data:
 

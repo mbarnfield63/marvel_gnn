@@ -16,11 +16,12 @@ prediction is interpretable as the level's uncertainty in the actual network.
 
 import numpy as np
 import torch
-from scipy.sparse import coo_matrix, csc_matrix
+from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import splu
 from torch_geometric.data import Data
 
 from marvel_gnn.core.network import split_components
+from marvel_gnn.core.selinv import selected_inverse
 from marvel_gnn.core.solver import level_index, solve_energies
 
 ERROR_SCALE = 1e6  # errors/sigmas are handled in 1e-6 cm-1 units
@@ -43,30 +44,6 @@ def qn_array(assignments):
         toks = a.split()
         out[r, :len(toks)] = [float(_TOKEN.get(s, s)) for s in toks]
     return out
-
-
-def _selected_inverse(lower, d):
-    """Entries of A^{-1} on the pattern of A's LDL^T factor (Takahashi
-    recursion): `lower` unit-lower CSC with sorted indices, `d` the pivots.
-    Returns a CSC matrix with `lower`'s pattern holding the lower triangle of
-    A^{-1}. Exact; cost ~ sum over columns of nnz(col)^2, so it stays cheap
-    while the factor has little fill (true of spectroscopic networks)."""
-    n = len(d)
-    ptr, rows, vals = lower.indptr, lower.indices, lower.data
-    zv = np.empty_like(vals)
-    for j in range(n - 1, -1, -1):
-        a, b = ptr[j], ptr[j + 1]
-        s, l = rows[a + 1:b], vals[a + 1:b]  # below-diagonal pattern of column j
-        zs = np.empty((len(s), len(s)))      # A^{-1}[s, s], from later columns
-        for c, k in enumerate(s):
-            r = rows[ptr[k]:ptr[k + 1]]
-            pos = ptr[k] + np.searchsorted(r, s[c:])
-            zs[c:, c] = zv[pos]
-            zs[c, c + 1:] = zs[c + 1:, c]
-        col = -zs @ l
-        zv[a + 1:b] = col
-        zv[a] = 1.0 / d[j] - l @ col
-    return csc_matrix((zv, rows, ptr), shape=lower.shape)
 
 
 def edge_leverages(transitions, idx):
@@ -93,7 +70,7 @@ def edge_leverages(transitions, idx):
     assert (lu.perm_r == lu.perm_c).all()
     lower = lu.L.tocsc()
     lower.sort_indices()
-    z = _selected_inverse(lower, lu.U.diagonal())
+    z = selected_inverse(lower, lu.U.diagonal())
 
     pos = np.r_[-1, lu.perm_c]  # level -> factor position; -1 = pinned (G row 0)
     p, q = pos[ui], pos[li]

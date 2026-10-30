@@ -1,0 +1,75 @@
+AP (tie-aware), pooled molecule-weighted, 95% cluster bootstrap over groups
+  XGB        0.499 [0.405, 0.613]  {'AlO': 0.6619, 'C2H4': 0.3881, 'CN': 0.5034, 'CO': 0.1609, 'CO2': 0.4997, 'CaOH': 0.9619, 'H3+': 0.5292, 'HOCl': 0.3288, 'N2O': 0.6085, 'PN': 0.4489, 'SO': 0.6398, 'TiO': 0.5404, 'VO': 0.2138}
+  LR         0.560 [0.493, 0.641]  {'AlO': 0.6442, 'C2H4': 0.4026, 'CN': 0.579, 'CO': 0.6224, 'CO2': 0.5297, 'CaOH': 0.931, 'H3+': 0.3965, 'HOCl': 0.5855, 'N2O': 0.5919, 'PN': 0.4292, 'SO': 0.6216, 'TiO': 0.4053, 'VO': 0.5366}
+  XGB_nodup  0.468 [0.371, 0.589]  {'AlO': 0.7428, 'C2H4': 0.3389, 'CN': 0.542, 'CO': 0.1147, 'CO2': 0.3722, 'CaOH': 0.9421, 'H3+': 0.4191, 'HOCl': 0.3758, 'N2O': 0.3688, 'PN': 0.3723, 'SO': 0.6069, 'TiO': 0.5361, 'VO': 0.3524}
+  iv2        0.544 [0.446, 0.645]  {'AlO': 0.4241, 'C2H4': 0.4409, 'CN': 0.5249, 'CO': 0.8711, 'CO2': 0.5279, 'CaOH': 0.9378, 'H3+': 0.7087, 'HOCl': 0.3717, 'N2O': 0.5719, 'PN': 0.4648, 'SO': 0.3447, 'TiO': 0.2858, 'VO': 0.596}
+  iv         0.595 [0.496, 0.707]  {'AlO': 0.8406, 'C2H4': 0.4329, 'CN': 0.6982, 'CO': 0.8711, 'CO2': 0.4852, 'CaOH': 1.0, 'H3+': 0.6881, 'HOCl': 0.3717, 'N2O': 0.4366, 'PN': 0.4257, 'SO': 0.5406, 'TiO': 0.4615, 'VO': 0.4833}
+  L5         0.540 [0.443, 0.645]  {'AlO': 0.4241, 'C2H4': 0.4413, 'CN': 0.5249, 'CO': 0.8711, 'CO2': 0.5385, 'CaOH': 0.9378, 'H3+': 0.7087, 'HOCl': 0.3717, 'N2O': 0.5845, 'PN': 0.3845, 'SO': 0.3447, 'TiO': 0.2858, 'VO': 0.596}
+  i_resid    0.407 [0.299, 0.529]  {'AlO': 0.4833, 'C2H4': 0.0684, 'CN': 0.5338, 'CO': 0.5301, 'CO2': 0.2493, 'CaOH': 0.9163, 'H3+': 0.1099, 'HOCl': 0.6622, 'N2O': 0.2815, 'PN': 0.3859, 'SO': 0.3486, 'TiO': 0.4115, 'VO': 0.3127}
+primary
+  XGB-iv2          -0.045 [-0.185, +0.094]  {'AlO': 0.2378, 'C2H4': -0.0529, 'CN': -0.0215, 'CO': -0.7103, 'CO2': -0.0282, 'CaOH': 0.0241, 'H3+': -0.1795, 'HOCl': -0.0428, 'N2O': 0.0366, 'PN': -0.0159, 'SO': 0.2952, 'TiO': 0.2546, 'VO': -0.3822}
+  LR-iv2           +0.016 [-0.062, +0.111]  {'AlO': 0.2201, 'C2H4': -0.0383, 'CN': 0.0541, 'CO': -0.2487, 'CO2': 0.0018, 'CaOH': -0.0068, 'H3+': -0.3122, 'HOCl': 0.2138, 'N2O': 0.0199, 'PN': -0.0356, 'SO': 0.2769, 'TiO': 0.1196, 'VO': -0.0594}
+secondary_L5
+  XGB-L5           -0.041 [-0.181, +0.096]  {'AlO': 0.2378, 'C2H4': -0.0533, 'CN': -0.0215, 'CO': -0.7103, 'CO2': -0.0388, 'CaOH': 0.0241, 'H3+': -0.1795, 'HOCl': -0.0428, 'N2O': 0.0241, 'PN': 0.0644, 'SO': 0.2952, 'TiO': 0.2546, 'VO': -0.3822}
+  LR-L5            +0.020 [-0.059, +0.113]  {'AlO': 0.2201, 'C2H4': -0.0387, 'CN': 0.0541, 'CO': -0.2487, 'CO2': -0.0088, 'CaOH': -0.0068, 'H3+': -0.3122, 'HOCl': 0.2138, 'N2O': 0.0074, 'PN': 0.0447, 'SO': 0.2769, 'TiO': 0.1196, 'VO': -0.0594}
+dup_contribution
+  XGB-XGB_nodup    +0.031 [-0.019, +0.085]  {'AlO': -0.0809, 'C2H4': 0.0492, 'CN': -0.0386, 'CO': 0.0462, 'CO2': 0.1275, 'CaOH': 0.0198, 'H3+': 0.1101, 'HOCl': -0.0469, 'N2O': 0.2398, 'PN': 0.0766, 'SO': 0.033, 'TiO': 0.0043, 'VO': -0.1386}
+H recovery (share of headroom lines in top K = |N|)
+  H.all.XGB                    0.126 [0.052, 0.210] (13 groups)
+  H.all.LR                     0.179 [0.077, 0.309] (13 groups)
+  H.all.XGB_nodup              0.118 [0.044, 0.203] (13 groups)
+  H.all.iv2                    0.005 [0.001, 0.012] (13 groups)
+  H.all.iv                     0.237 [0.082, 0.442] (13 groups)
+  H.all.L5                     0.030 [0.001, 0.081] (13 groups)
+  H.all.i_resid                0.194 [0.083, 0.361] (13 groups)
+  H.all.random                 0.042 [0.008, 0.098] (13 groups)
+  H.visible.XGB                0.155 [0.031, 0.338] (11 groups)
+  H.visible.LR                 0.368 [0.191, 0.569] (11 groups)
+  H.visible.XGB_nodup          0.191 [0.038, 0.384] (11 groups)
+  H.visible.iv2                0.006 [0.001, 0.013] (11 groups)
+  H.visible.iv                 0.070 [0.000, 0.165] (11 groups)
+  H.visible.L5                 0.036 [0.002, 0.097] (11 groups)
+  H.visible.i_resid            0.515 [0.277, 0.765] (11 groups)
+  H.visible.random             0.050 [0.010, 0.118] (11 groups)
+  H.invisible.XGB              0.140 [0.032, 0.274] (11 groups)
+  H.invisible.LR               0.065 [0.011, 0.126] (11 groups)
+  H.invisible.XGB_nodup        0.125 [0.028, 0.227] (11 groups)
+  H.invisible.iv2              0.005 [0.000, 0.012] (11 groups)
+  H.invisible.iv               0.321 [0.115, 0.559] (11 groups)
+  H.invisible.L5               0.035 [0.001, 0.097] (11 groups)
+  H.invisible.i_resid          0.037 [0.000, 0.091] (11 groups)
+  H.invisible.random           0.049 [0.008, 0.117] (11 groups)
+  H_iv.all.XGB                 0.148 [0.083, 0.212] (12 groups)
+  H_iv.all.LR                  0.272 [0.136, 0.428] (12 groups)
+  H_iv.all.XGB_nodup           0.122 [0.054, 0.200] (12 groups)
+  H_iv.all.iv2                 0.005 [0.001, 0.012] (12 groups)
+  H_iv.all.iv                  0.000 [0.000, 0.000] (12 groups)
+  H_iv.all.L5                  0.033 [0.001, 0.089] (12 groups)
+  H_iv.all.i_resid             0.256 [0.115, 0.448] (12 groups)
+  H_iv.all.random              0.046 [0.009, 0.109] (12 groups)
+  H_iv.visible.XGB             0.237 [0.100, 0.424] (11 groups)
+  H_iv.visible.LR              0.440 [0.269, 0.631] (11 groups)
+  H_iv.visible.XGB_nodup       0.225 [0.074, 0.412] (11 groups)
+  H_iv.visible.iv2             0.006 [0.001, 0.013] (11 groups)
+  H_iv.visible.iv              0.000 [0.000, 0.000] (11 groups)
+  H_iv.visible.L5              0.036 [0.002, 0.097] (11 groups)
+  H_iv.visible.i_resid         0.495 [0.244, 0.742] (11 groups)
+  H_iv.visible.random          0.050 [0.010, 0.118] (11 groups)
+  H_iv.invisible.XGB           0.087 [0.026, 0.164] (10 groups)
+  H_iv.invisible.LR            0.079 [0.000, 0.192] (10 groups)
+  H_iv.invisible.XGB_nodup     0.080 [0.019, 0.163] (10 groups)
+  H_iv.invisible.iv2           0.006 [0.000, 0.014] (10 groups)
+  H_iv.invisible.iv            0.000 [0.000, 0.000] (10 groups)
+  H_iv.invisible.L5            0.039 [0.002, 0.104] (10 groups)
+  H_iv.invisible.i_resid       0.030 [0.000, 0.083] (10 groups)
+  H_iv.invisible.random        0.054 [0.009, 0.126] (10 groups)
+negate vs inflate AUROC (|r|/unc >= 3, 2-column runs)
+  XGB      {"mean": 0.7890331415777226, "ci95": [0.6276683275049283, 0.9144764666361472], "groups": 6, "by_group": {"CO": 0.9349, "CO2": 0.931, "H3+": 0.7905, "N2O": 0.9497, "PN": 0.4489, "VO": 0.6791}}
+  counts   {"22BoAkHoYuTe:51V-16O:6": [54, 420], "22BoAkHoYuTe:51V-16O:7": [36, 67], "23BoMiZoPo:1H3_p:8": [55, 75], "24AlIbFu:16O-12C-18O:7": [93, 4110], "24IbAlFu_CO2636:13C-16O2:7": [27, 1776], "24SeElYu_PN:31P-14N:4": [1532, 236], "25AzAlAb:12C-16O2:7": [107, 3851], "25AzTeYu:16O-13C-18O:7": [20, 1513], "25MaAzTe:12C-17O2:7": [56, 941], "25MaElAb:12C-16O:2": [10, 784], "25ObAzTe:16O-12C-17O:7": [97, 1408], "24TeFuYu:14N2-16O:5": [487, 3681]}
+  LR       {"mean": 0.8239683500278924, "ci95": [0.6620253708513354, 0.9355685558252567], "groups": 6, "by_group": {"CO": 0.9476, "CO2": 0.9102, "H3+": 0.7825, "N2O": 0.9502, "PN": 0.4431, "VO": 0.9102}}
+  i_resid  {"mean": 0.7807414349201434, "ci95": [0.6231966526736825, 0.9177962958650959], "groups": 6, "by_group": {"CO": 0.9989, "CO2": 0.7944, "H3+": 0.6718, "N2O": 0.8603, "PN": 0.432, "VO": 0.9272}}
+  L5       {"mean": 0.8510454950091441, "ci95": [0.7009761883900069, 0.9522509509285446], "groups": 6, "by_group": {"CO": 0.9989, "CO2": 0.887, "H3+": 0.8562, "N2O": 0.9575, "PN": 0.4929, "VO": 0.9137}}
+XGB gain share: {"log_z": 0.114, "log_stud": 0.027, "h": 0.035, "loop_pos": 0.129, "log_deg_u": 0.013, "log_deg_l": 0.025, "src_flagged": 0.12, "src_scatter": 0.264, "src_log_size": 0.051, "src_share": 0.052, "unc_rel_src": 0.026, "has_dup": 0.013, "n_dup_src": 0.007, "best_other_ratio": 0.008, "dup_discrep": 0.052, "newer_dup": 0.002, "src_year_pct": 0.063, "year_missing": 0.0}
+permutation AP drop: {"log_z": 0.1589, "log_stud": 0.0427, "h": -0.0017, "loop_pos": 0.2899, "log_deg_u": 0.0061, "log_deg_l": -0.0049, "src_flagged": -0.0027, "src_scatter": -0.0063, "src_log_size": -0.0073, "src_share": 0.0078, "unc_rel_src": 0.0133, "has_dup": 0.0088, "n_dup_src": -0.0001, "best_other_ratio": 0.0003, "dup_discrep": 0.0839, "newer_dup": 0.0028, "src_year_pct": 0.022, "year_missing": 0.0, "family:residual": 0.4267, "family:structure": 0.0067, "family:source": 0.0097, "family:dup": 0.0979}
+chosen hyperparameters: {"XGB": {"AlO": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 50}, "C2H4": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 5}, "CN": {"max_depth": 2, "n_estimators": 300, "min_child_weight": 5}, "CO": {"max_depth": 4, "n_estimators": 300, "min_child_weight": 5}, "CO2": {"max_depth": 4, "n_estimators": 300, "min_child_weight": 5}, "CaOH": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 5}, "H3+": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 5}, "HOCl": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 5}, "N2O": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 5}, "PN": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 5}, "SO": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 50}, "TiO": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 5}, "VO": {"max_depth": 2, "n_estimators": 300, "min_child_weight": 5}}, "LR": {"AlO": {"lambda": 0.1}, "C2H4": {"lambda": 0.1}, "CN": {"lambda": 0.1}, "CO": {"lambda": 0.1}, "CO2": {"lambda": 0.1}, "CaOH": {"lambda": 0.1}, "H3+": {"lambda": 0.1}, "HOCl": {"lambda": 0.1}, "N2O": {"lambda": 0.1}, "PN": {"lambda": 0.1}, "SO": {"lambda": 0.1}, "TiO": {"lambda": 0.1}, "VO": {"lambda": 0.1}}, "XGB_nodup": {"AlO": {"max_depth": 2, "n_estimators": 100, "min_child_weight": 50}, "C2H4": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 5}, "CN": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 50}, "CO": {"max_depth": 4, "n_estimators": 300, "min_child_weight": 5}, "CO2": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 5}, "CaOH": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 5}, "H3+": {"max_depth": 2, "n_estimators": 100, "min_child_weight": 50}, "HOCl": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 5}, "N2O": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 50}, "PN": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 5}, "SO": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 50}, "TiO": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 50}, "VO": {"max_depth": 4, "n_estimators": 100, "min_child_weight": 50}}}
+decision: {"a_XGB_beats_iv2": false, "b_H_recovery": 0.12605754685498163, "b_random": 0.04245594293464953, "b_ok": false, "dup_share_of_gain": null, "verdict": "no escalation; the loop stays the tool"}

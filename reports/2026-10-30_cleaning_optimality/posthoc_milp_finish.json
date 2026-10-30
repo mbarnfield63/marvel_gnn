@@ -1,0 +1,233 @@
+{
+ "20YiOwTe:40Ca-16O-1H:8": {
+  "verify": {
+   "status": 0,
+   "removed": 9,
+   "violators": 8,
+   "max_viol_cm": 0.06849999999889406
+  },
+  "milp_removed": 9,
+  "ls_maxz_on_milp_set": 6.991464802558767,
+  "ls_viol_on_milp_set": 7,
+  "milpf_explicit": 16,
+  "milpf_finish": 7,
+  "m1_explicit": 15,
+  "n_lines": 3240,
+  "milpf_kept": 0.9950617283950617,
+  "m1_kept": 0.9953703703703703,
+  "milpf_nll": -3.132751339483157,
+  "m1_nll": -3.13255066934626,
+  "milpf_validated": 0.579539641943734,
+  "m1_validated": 0.5800511508951407
+ },
+ "21BoShYuTe:27Al-16O:6": {
+  "verify": {
+   "status": 0,
+   "removed": 17,
+   "violators": 361,
+   "max_viol_cm": 0.11720000000312575
+  },
+  "milp_removed": 17,
+  "ls_maxz_on_milp_set": 8.84552321312907,
+  "ls_viol_on_milp_set": 726,
+  "milpf_explicit": 617,
+  "milpf_finish": 600,
+  "m1_explicit": 627,
+  "n_lines": 23934,
+  "milpf_kept": 0.9742207737946018,
+  "m1_kept": 0.9738029581348709,
+  "milpf_nll": -2.7281352226628357,
+  "m1_nll": -2.7281164903615016,
+  "milpf_validated": 0.8689655172413793,
+  "m1_validated": 0.8688122605363985
+ },
+ "22BoAkHoYuTe:51V-16O:6": {
+  "verify": {
+   "status": 0,
+   "removed": 55,
+   "violators": 299,
+   "max_viol_cm": 0.07709558297698095
+  },
+  "milp_removed": 55,
+  "ls_maxz_on_milp_set": 22.87081892172864,
+  "ls_viol_on_milp_set": 580,
+  "milpf_explicit": 372,
+  "milpf_finish": 317,
+  "m1_explicit": 419,
+  "n_lines": 9164,
+  "milpf_kept": 0.9594063727629856,
+  "m1_kept": 0.9542776080314274,
+  "milpf_nll": -2.1693154070461484,
+  "m1_nll": -2.180713775493228,
+  "milpf_validated": 0.7477664658217328,
+  "m1_validated": 0.7436110533970497
+ },
+ "22BoAkHoYuTe:51V-16O:7": {
+  "verify": {
+   "status": 0,
+   "removed": 10,
+   "violators": 44,
+   "max_viol_cm": 0.024285999998333863
+  },
+  "milp_removed": 10,
+  "ls_maxz_on_milp_set": 19.42258159033372,
+  "ls_viol_on_milp_set": 77,
+  "milpf_explicit": 42,
+  "milpf_finish": 32,
+  "m1_explicit": 111,
+  "n_lines": 7921,
+  "milpf_kept": 0.9946976391869713,
+  "m1_kept": 0.9859866178512814,
+  "milpf_nll": -4.991741887114658,
+  "m1_nll": -4.994413032882664,
+  "milpf_validated": 0.5882868665614589,
+  "m1_validated": 0.5828511309836928
+ },
+ "22RaFuFu_HOCl:1H-16O-35Cl:6": {
+  "verify": {
+   "status": 0,
+   "removed": 52,
+   "violators": 34,
+   "max_viol_cm": 0.014465089999575867
+  },
+  "milp_removed": 52,
+  "ls_maxz_on_milp_set": 2.8929771406183136,
+  "ls_viol_on_milp_set": 0,
+  "milpf_explicit": 52,
+  "milpf_finish": 0,
+  "m1_explicit": 54,
+  "n_lines": 21462,
+  "milpf_kept": 0.9975771130369956,
+  "m1_kept": 0.9974839250768801,
+  "milpf_nll": -5.660240290604255,
+  "m1_nll": -5.660810344713059,
+  "milpf_validated": 0.83861852433281,
+  "m1_validated": 0.8383045525902669
+ },
+ "23BoMiZoPo:1H3_p:8": {
+  "verify": {
+   "status": 0,
+   "removed": 44,
+   "violators": 49,
+   "max_viol_cm": 0.0318378591595913
+  },
+  "milp_removed": 44,
+  "ls_maxz_on_milp_set": 15.662648668997765,
+  "ls_viol_on_milp_set": 42,
+  "milpf_explicit": 73,
+  "milpf_finish": 29,
+  "m1_explicit": 70,
+  "n_lines": 1640,
+  "milpf_kept": 0.9554878048780487,
+  "m1_kept": 0.9573170731707317,
+  "milpf_nll": -3.404039737986692,
+  "m1_nll": -3.3955467191565143,
+  "milpf_validated": 0.44964539007092197,
+  "m1_validated": 0.4524822695035461
+ },
+ "24IbAlFu_CO2636:13C-16O2:7": {
+  "verify": {
+   "status": 0,
+   "removed": 78,
+   "violators": 1164,
+   "max_viol_cm": 0.04328999999981534
+  },
+  "milp_removed": 78,
+  "ls_maxz_on_milp_set": 35.267533444311994,
+  "ls_viol_on_milp_set": 1515,
+  "milpf_explicit": 1239,
+  "milpf_finish": 1161,
+  "m1_explicit": 1239,
+  "n_lines": 20670,
+  "milpf_kept": 0.9400580551523948,
+  "m1_kept": 0.9400580551523948,
+  "milpf_nll": -5.150168223553852,
+  "m1_nll": -5.150168227917256,
+  "milpf_validated": 0.7001582278481012,
+  "m1_validated": 0.7001582278481012
+ },
+ "25MaAzTe:12C-17O2:7": {
+  "verify": {
+   "status": 0,
+   "removed": 40,
+   "violators": 830,
+   "max_viol_cm": 0.014444000000679807
+  },
+  "milp_removed": 40,
+  "ls_maxz_on_milp_set": 50.88035516109812,
+  "ls_viol_on_milp_set": 983,
+  "milpf_explicit": 744,
+  "milpf_finish": 704,
+  "m1_explicit": 744,
+  "n_lines": 10140,
+  "milpf_kept": 0.9266272189349113,
+  "m1_kept": 0.9266272189349113,
+  "milpf_nll": -6.041212975267394,
+  "m1_nll": -6.04121321810364,
+  "milpf_validated": 0.6956652618904274,
+  "m1_validated": 0.6956652618904274
+ },
+ "25MaElAb:12C-16O:2": {
+  "verify": {
+   "status": 0,
+   "removed": 7,
+   "violators": 904,
+   "max_viol_cm": 0.1250599999975202
+  },
+  "milp_removed": 7,
+  "ls_maxz_on_milp_set": 57.60237983849947,
+  "ls_viol_on_milp_set": 844,
+  "milpf_explicit": 794,
+  "milpf_finish": 787,
+  "m1_explicit": 794,
+  "n_lines": 19233,
+  "milpf_kept": 0.9587167888524931,
+  "m1_kept": 0.9587167888524931,
+  "milpf_nll": -5.573926235438547,
+  "m1_nll": -5.573926222393341,
+  "milpf_validated": 0.8997821350762527,
+  "m1_validated": 0.8997821350762527
+ },
+ "25ObAzTe:16O-12C-17O:7": {
+  "verify": {
+   "status": 0,
+   "removed": 44,
+   "violators": 841,
+   "max_viol_cm": 0.02721000000383501
+  },
+  "milp_removed": 44,
+  "ls_maxz_on_milp_set": 93.90523123329332,
+  "ls_viol_on_milp_set": 1188,
+  "milpf_explicit": 857,
+  "milpf_finish": 813,
+  "m1_explicit": 857,
+  "n_lines": 16076,
+  "milpf_kept": 0.9466907190843493,
+  "m1_kept": 0.9466907190843493,
+  "milpf_nll": -5.82944737600241,
+  "m1_nll": -5.8295021893879175,
+  "milpf_validated": 0.6964285714285714,
+  "m1_validated": 0.6964285714285714
+ },
+ "26GrDaPo:13C-16O:2": {
+  "verify": {
+   "status": 0,
+   "removed": 15,
+   "violators": 21,
+   "max_viol_cm": 0.0027300000034174445
+  },
+  "milp_removed": 15,
+  "ls_maxz_on_milp_set": 6.177585289037779,
+  "ls_viol_on_milp_set": 18,
+  "milpf_explicit": 32,
+  "milpf_finish": 17,
+  "m1_explicit": 32,
+  "n_lines": 3397,
+  "milpf_kept": 0.9905799234618782,
+  "m1_kept": 0.9905799234618782,
+  "milpf_nll": -5.945830505666357,
+  "m1_nll": -5.945830505346146,
+  "milpf_validated": 0.8876013904982619,
+  "m1_validated": 0.8876013904982619
+ }
+}
