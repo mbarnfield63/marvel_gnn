@@ -39,11 +39,11 @@ from marvel_gnn.gnn.labelfix import correction_report, fix_metrics, fix_sample
 from marvel_gnn.gnn.linkage import link_bce, link_metrics, orphan_report, prepare_linked
 from marvel_gnn.gnn.model import MarvelGNN, nll_loss
 
-CO_DIR = Path(r"C:\Code\MARVEL\molecules\CO")
+CO_DIR = Path(r"C:\Code\MARVEL_scraping\molecules\CO")
 MODEL_PATH = Path(__file__).parents[3] / "data" / "marvel_gnn.pt"
 
-TRAIN_ISOS = ["13C16O", "12C18O", "13C18O"]
-VAL_ISOS = ["12C17O", "13C17O"]
+TRAIN_ISOS = ["13C16O", "12C18O", "13C17O"]
+VAL_ISOS = ["12C17O", "13C18O"]
 
 N_TRAIN_SAMPLES = 200   # masked refits per training network (uncertainty)
 N_VAL_SAMPLES = 100
@@ -230,7 +230,7 @@ def main():
             nll, cover = fixed_sigma_metrics(sigma, err)
             print(f"  {name:16s} NLL {nll:10.4f}   1-sigma coverage {cover:.1%} (target ~68%)")
 
-        gap = np.abs(graph.level_energies.numpy()
+        gap = np.abs(graph.level_energies.cpu().numpy()
                      - np.array([pub[a].energy for a in graph.assignments])) * ERROR_SCALE
         for name, sigma in [("GNN", sigma_gnn), ("legacy baseline", sigma_legacy)]:
             print(f"  sanity: |E_ours - E_published| <= sigma_{name}: "
